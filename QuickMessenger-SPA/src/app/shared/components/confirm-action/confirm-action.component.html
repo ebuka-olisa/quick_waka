@@ -1,0 +1,15 @@
+<div class="myModalContainer">
+    <div class="modal-header">
+        <h4 class="modal-title pull-left">{{Action}} {{Item}}</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="dismiss()">
+          <i class="mdi mdi-close"></i>
+        </button>
+    </div>
+    <div class="modal-body">
+      <p class="col-md-12 m-t-20 text-black" ngbAutofocus >Are you sure you want to {{Action | lowercase}} this selected {{Item}}?<br />{{ExtraMessage}}</p>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn no-m-r pull-right i-rounded i-bordered font-13 cursor-pointer" (click)="dismiss()">Cancel</button>
+      <button type="button" class="btn no-m-r pull-right i-rounded i-black i-bordered font-13 cursor-pointer" (click)="ok()">{{Action}}</button>
+    </div>
+  </div>

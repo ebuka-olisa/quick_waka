@@ -1,0 +1,170 @@
+<!-- content section -->
+<section class="content-section bg-gray padding-two" id="content-section">
+    <div class="container md-container-fluid">
+        <div class="row">
+            <div class="col-lg-8 col-md-7">
+                <div class="col-12 shop-cart-table checkout-address-review md-no-padding-lr">
+                    <div *ngFor="let ServiceOrder of Cart.serviceOrders;">
+                        <div class="cart-section bg-white" *ngFor="let Order of ServiceOrder.orders; let j = index">
+                            <h3 class="p-b-3">{{ServiceOrder.service.name}} 
+                                <span *ngIf="ServiceOrder.orders.length > 1">#{{j + 1}}</span>
+                            </h3>
+                            <h5 *ngIf="Order.isPickup" class="text-grey">Pickup Errand</h5>
+                            <h5 *ngIf="!Order.isPickup" class="text-grey">Purchase Errand</h5>
+
+                            <!-- Pickup Address -->
+                            <div class="display-flex review-section" *ngIf="Order.isPickup">
+                                <div class="flex-grow-100">
+                                    <p class="no-padding-left text-left font-13 text-uppercase font-weight-600 black-text letter-spacing-1 display-inline-block m-b-5">
+                                        Pickup Address
+                                    </p>
+                                    <p class="text-grey letter-spacing-1" *ngIf="!Order.pickupAddress">No pickup address has been selected.</p>
+                                    <p class="letter-spacing-1" *ngIf="Order.pickupAddress">
+                                        {{Order.pickupAddress.firstName}} {{Order.pickupAddress.lastName}}<br/>
+                                        {{Order.pickupAddress.street}}, {{Order.pickupAddress.city}}, {{Order.pickupAddress.state}} <br/>
+                                        {{Order.pickupAddress.phone}} 
+                                    </p>
+                                </div>
+                                <button class="btn-gray btn btn-round btn-very-small no-margin pull-right" (click)="selectPickupAddress(Order)">{{Order.pickupAddress ? 'Change': 'Select'}}</button>
+                            </div>
+
+                            <!-- Pickup Date -->
+                            <div class="display-flex review-section" *ngIf="Order.isPickup">
+                                <div class="flex-grow-100">
+                                    <p class="no-padding-left text-left font-13 text-uppercase font-weight-600 black-text letter-spacing-1 display-inline-block m-b-5">
+                                        Pickup Date
+                                    </p>
+                                    <div class="col-12 no-p-lr">
+                                        <p class="text-grey letter-spacing-1" *ngIf="!Order.pickupDate">No pickup date has been selected.</p>
+                                        <p class="letter-spacing-1" *ngIf="Order.pickupDate">{{ Order.pickupDate | date: 'EEEE, dd MMMM yyyy h:mm a' }}</p>
+                                        <datetime-popup [(value)]="Order.pickupTempDate" 
+                                        (valueChange)="onPickupDateValueChange($event, Order)"
+                                        [(showPopup)]="datetimePickerConfig.showPicker" 
+                                        [showMeridian]="datetimePickerConfig.showMeridian"
+                                        [minDate]="datetimePickerConfig.minDate"></datetime-popup>
+                                    </div>
+                                </div>
+                                <button class="btn-gray btn btn-round btn-very-small no-margin pull-right" (click)="toggleDateTimePopup()">{{Order.pickupDate ? 'Change': 'Select'}}</button>
+                            </div>
+
+                            <!-- Delivery Address -->
+                            <div class="display-flex review-section">
+                                <div class="flex-grow-100">
+                                    <p class="no-padding-left text-left font-14 text-uppercase font-weight-600 black-text letter-spacing-1 display-inline-block m-b-5">
+                                        Delivery Address
+                                    </p>
+                                    <p class="text-grey letter-spacing-1 m-b-5" *ngIf="!Order.deliveryAddress">No delivery address has been selected.</p>
+                                    <p class="letter-spacing-1" *ngIf="Order.deliveryAddress">
+                                        {{Order.deliveryAddress.firstName}} {{Order.deliveryAddress.lastName}}<br/>
+                                        {{Order.deliveryAddress.street}}, {{Order.deliveryAddress.city}}, {{Order.deliveryAddress.state}} <br/>
+                                        {{Order.deliveryAddress.phone}}
+                                    </p>
+                                </div>
+                                <button class="btn-gray btn btn-round btn-very-small no-margin pull-right" (click)="selectDeliveryAddress(Order)">{{Order.deliveryAddress ? 'Change': 'Select'}}</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-5">
+                <div class="col-12 checkout-cart-summary bg-white no-p-b">
+                    <h3 class="border-bottom">
+                        Order Summary
+                        <button class="btn-orange btn btn-round btn-very-small font-weight-700 no-margin pull-right" routerLink="/cart">Edit</button>
+                    </h3>
+                    <div *ngFor="let ServiceOrder of Cart.serviceOrders;">
+                        <div class="checkout-cart-summary-section" *ngFor="let Order of ServiceOrder.orders; let j = index">
+                            <h4 class="border-bottom-very-light">
+                                {{ServiceOrder.service.name}} 
+                                <span *ngIf="ServiceOrder.orders.length > 1">#{{j + 1}}</span>
+                            </h4>
+                            <table class="table shop-cart">
+                                <tbody>
+                                    <tr *ngFor="let Item of Order.purchaseItems">
+                                        <td class="product-thumbnail text-left">
+                                            <img [src]="Item.pictureUrl" alt="" >
+                                        </td>
+                                        <td class="text-left">
+                                            <a class="product-name black-text" href="javascript:void(0)">{{Item.name}}</a>
+                                            <p class="font-weight-600 no-m-b black-text">₦{{Item.price | number}}</p>
+                                            <p class="mid-gray-text no-m-b">Qty: <span class="font-weight-600 black-text">{{Item.quantity}}</span></p>
+                                        </td>
+                                    </tr>
+                                    <tr *ngIf="Order.pickupItem">
+                                        <td class="product-thumbnail text-left" *ngIf="Order.pickupItem.pictures && Order.pickupItem.pictures.length > 0">
+                                            <img [src]="allowImageURL(Order.pickupItem.pictures[0].url)" alt="" >
+                                        </td>
+                                        <td class="text-left">
+                                            <a href="javascript:void(0)" class="product-name black-text">{{Order.pickupItem.name}}</a>
+                                            <p class="mid-gray-text no-m-b">Pieces: <span class="font-weight-600 black-text">{{Order.pickupItem.count}}</span></p>
+                                            <p class="mid-gray-text no-m-b">Size: <span class="font-weight-600 black-text text-capitalize">{{Order.pickupItem.size}}</span></p>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <table class="table cart-total border-top">
+                        <tbody>
+                            <tr *ngIf="cartTotal() > 0">
+                                <th class="text-left no-padding-left text-uppercase font-weight-600 letter-spacing-2 text-small xs-no-padding">Sub-total</th>
+                                <td class="text-uppercase text-right no-padding-right font-weight-700 black-text xs-no-padding">₦{{cartTotal() | number}}</td>
+                            </tr>
+                            <tr>
+                                <th class="text-left no-padding-left text-uppercase font-weight-600 letter-spacing-2 text-small xs-no-padding">Shipping</th>
+                                <td class="text-right no-padding-right font-weight-400 gray-text text-small xs-no-padding" *ngIf="!HasAllAddresses">
+                                    Add delivery address to see delivery charges
+                                </td>
+                                <td class="text-uppercase text-right no-padding-right font-weight-700 black-text xs-no-padding" *ngIf="HasAllAddresses">
+                                    ₦{{ShippingCost | number}}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="no-padding" colspan="2">
+                                    <hr>
+                                </td>
+                            </tr>
+                            <tr class="total">
+                                <th class="text-uppercase text-left no-padding-left font-weight-700 text-large xs-no-padding">Total</th>
+                                <td class="text-uppercase text-right no-padding-right font-weight-700 black-text text-large no-letter-spacing xs-no-padding">₦{{cartTotal() + ShippingCost | number}}</td>
+                            </tr>
+                            <tr>
+                                <td class="no-padding" colspan="2">
+                                    <hr class="no-margin-bottom">
+                                </td>
+                            </tr>
+                            <tr class="total" *ngIf="!HasAllAddresses">
+                                <th class="text-right padding-one no-padding-bottom no-padding-right text-dark-warning font-weight-400 text-small" colspan="2">Excluding delivery charges</th>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <button class="btn btn-green btn-round no-m-t checkout-btn" (click)="processPayment()">Proceed to Payment</button>
+                    <flutterwave-make-payment id="flutter_pymt_btn" class="display-none"
+                        [public_key]="paymentData.public_key"
+                        [amount]="paymentData.amount"
+                        currency='NGN'
+                        payment_options="card"
+                        text="Pay Now"
+                        [customer]="paymentData.customer"
+                        [customizations]="paymentData.customizations"
+                        [tx_ref]="paymentData.tx_ref"
+                        (callback)="paymentCallback($event)"
+                        (close)="paymentCancel()" >
+                    </flutterwave-make-payment>
+                    <!--<button class="btn btn-green btn-round no-m-t checkout-btn display-none" id="pymt_btn" angular4-paystack
+                    [key]="options.key" [email]="options.email" [amount]="options.amount" [ref]="options.ref" 
+                    (onClose)="paymentCancel()" (callback)="paymentDone($event)"></button>-->
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- end content section -->
+
+<!-- Preloader -->
+<div class="preloader opaque-background" [hidden]="!showFullTransparentLoadingIndicator">
+  <svg class="circular" viewBox="25 25 50 50">
+      <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10"></circle>
+  </svg>
+</div>

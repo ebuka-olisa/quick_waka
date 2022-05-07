@@ -1,0 +1,151 @@
+<div class="myModalContainer" [ngClass]="{'has-loading': !descriptionTextAreaReady || !editVendorReady}">
+    <div class="modal-header" [hidden]="!descriptionTextAreaReady || !editVendorReady">
+        <h4 class="modal-title pull-left font-weight-300 font-16">{{initialState.title}}</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="close()" *ngIf="!processing && !deleting">
+            <i class="mdi mdi-close"></i>
+        </button>
+    </div>
+    <div class="modal-body" [hidden]="!descriptionTextAreaReady || !editVendorReady">
+        <form #myForm="ngForm" (ngSubmit)="save()" class="form-horizontal">
+            <div class="col-md-12 p-t-5 p-b-5 button-region">
+                <button type="button" class="btn no-m-r pull-right i-rounded i-red-bordered i-grey-disabled font-16 cursor-pointer m-l-5 icon-only" 
+                *ngIf="editMode" [disabled]="processing || deleting" (click)="delete()" ngbTooltip="Delete Staff" placement="top" container="body">
+                    <i class="fa fa-trash-o no-m-r" *ngIf="!deleting"></i>
+                    <span *ngIf="deleting" class="loader loader-small display-inline-block no-animate no-m-l"></span>
+                </button>
+                <button type="submit" class="btn no-m-r pull-right i-rounded i-orange i-grey-disabled font-13 cursor-pointer"
+                    [disabled]="processing || deleting || !myForm.form.valid || !telInputDirectiveRef1?.isInputValid() || phone2Invalid() || (editMode && !changesMade())">
+                    <i class="fa fa-save"></i>
+                    Save
+                    <span *ngIf="processing" class="loader loader-small display-inline-block ng-hide pull-right no-animate"></span>
+                </button>
+            </div>
+
+            <div class="col-md-12 no-p-lr modal-body-container">  
+                <div class="col-md-12">
+                    <!-- Picture -->
+                    <div class="form-group col-lg-12 col-xl-2">
+                        <div class="form-group">
+                            <app-profile-pic  *ngIf="profilePictureConfig"  [config]="profilePictureConfig"></app-profile-pic>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12 col-lg-12 col-xl-10 no-p-lr">
+                        <!-- Name-->
+                        <div class="col-12 no-p-lr"> 
+                            <div class="form-group col-12">  
+                                <div class="form-group">
+                                    <h3 class="box-title">Name</h3>
+                                    <hr class="m-t-0 m-b-15">
+                                </div>  
+                                <div class="form-group display-flex">
+                                    <div class="flex-grow-100">
+                                        <input type="text" name='name' class="form-control big-input flex-grow-100" [(ngModel)]="Vendor.name"
+                                        required [ngClass]="{'input-validation-error': fieldErrors.Name, 'edit-mode': editMode}" />
+                                        <span *ngIf="fieldErrors.Name" class="field-validation-error white-space-pre">{{fieldErrors.Name}}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Contact and Address -->
+                        <div class="col-12 no-p-lr">
+                            <!-- Contact Information -->
+                            <div class="form-group col-md-12 col-lg-5">
+                                <div class="form-group">
+                                    <h3 class="box-title">Contact Information</h3>
+                                    <hr class="m-t-0 m-b-15">
+                                </div>
+    
+                                <div class="form-group display-flex">
+                                    <label class="control-label font-weight-300 m-b-5 label-group-one">Email</label>
+                                    <div class="flex-grow-100">
+                                        <input type="email" name='email' class="form-control" [(ngModel)]="Vendor.email"
+                                        required [ngClass]="{'input-validation-error': fieldErrors.Email, 'edit-mode': editMode}" />
+                                        <span *ngIf="fieldErrors.Email" class="field-validation-error white-space-pre">{{fieldErrors.Email}}</span>
+                                    </div>
+                                </div>
+
+                                <div class="form-group display-flex">
+                                    <label class="control-label font-weight-300 m-b-5 label-group-one">Phone</label>
+                                    <div class="flex-grow-100 m-b-10">
+                                        <input type="text" required #phone ng2TelInput class="form-control"
+                                        [ng2TelInputOptions]="ng2TelInputOptions"
+                                        [(ngModel)]="TempPhone" name="phone" (ng2TelOutput)="getNumber($event)" (input)="checkPhoneError()"
+                                        [ngClass]="{'input-validation-error': fieldErrors.Phone, 'edit-mode': editMode}"/>
+                                        <span *ngIf="fieldErrors.Phone" class="field-validation-error m-t-5 white-space-pre">{{fieldErrors.Phone}}</span>
+                                    </div>
+                                </div>
+
+                                <div class="form-group display-flex">
+                                    <label class="control-label font-weight-300 m-b-5 label-group-one">Phone 2 <span class="display-block font-10 opacity-7">(Optional)</span></label>
+                                    <div class="flex-grow-100 m-b-10">
+                                        <input type="text" #phone2 ng2TelInput class="form-control"
+                                        [ng2TelInputOptions]="ng2TelInputOptions"
+                                        [(ngModel)]="TempPhone2" name="phone2" (ng2TelOutput)="getNumber2($event)" (input)="checkPhoneError2()"
+                                        [ngClass]="{'input-validation-error': fieldErrors.Phone2, 'edit-mode': editMode}"/>
+                                        <span *ngIf="fieldErrors.Phone2" class="field-validation-error m-t-5 white-space-pre">{{fieldErrors.Phone2}}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Address -->
+                            <div class="form-group col-md-12 col-lg-7" *ngIf="Vendor.address">
+                                <div class="form-group">
+                                    <h3 class="box-title">Address</h3>
+                                    <hr class="m-t-0 m-b-15">
+                                </div>
+                
+                                <div class="form-group display-flex">
+                                    <label class="control-label font-weight-300 m-b-5 label-group-two">Street</label>
+                                    <div class="flex-grow-100">
+                                        <input type="text" name="street" class="form-control flex-grow-100" [(ngModel)]="Vendor.address.street" required
+                                            [ngClass]="{'input-validation-error': fieldErrors.Address && fieldErrors.Address.Street, 'edit-mode': editMode}" />
+                                        <span *ngIf="fieldErrors.Address && fieldErrors.Address.Street" class="field-validation-error white-space-pre">{{fieldErrors.Address.Street}}</span>
+                                    </div>
+                                </div>
+            
+                                <div class="form-group display-flex">
+                                    <label class="control-label font-weight-300 m-b-5 label-group-two">City</label>
+                                    <div class="flex-grow-100">
+                                        <input type="text" name="city" class="form-control flex-grow-100" [(ngModel)]="Vendor.address.city" required
+                                        [ngClass]="{'input-validation-error': fieldErrors.Address && fieldErrors.Address.City, 'edit-mode': editMode}" />
+                                        <span *ngIf="fieldErrors.Address && fieldErrors.Address.City" class="field-validation-error white-space-pre">{{fieldErrors.Address.City}}</span>
+                                    </div>
+                                </div>
+                
+                                <div class="form-group display-flex">
+                                    <label class="control-label font-weight-300 m-b-5 label-group-two">State</label>
+                                    <div class="flex-grow-100">
+                                        <select name="state" class="form-control flex-grow-100" [(ngModel)]="Vendor.address.state" required
+                                        [ngClass]="{'input-validation-error': fieldErrors.Address && fieldErrors.Address.State, 'edit-mode': editMode}">
+                                            <option value="">----- Please select -----</option>
+                                            <option *ngFor="let state of States" [(ngValue)]="state">{{state}}</option>
+                                        </select>
+                                        <span *ngIf="fieldErrors.Address && fieldErrors.Address.State" class="field-validation-error white-space-pre">{{fieldErrors.Address.State}}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="form-group col-md-12">
+                            <div class="form-group">
+                                <h3 class="box-title" ngbAutofocus>Description <h6>(Optional)</h6></h3>
+                                <hr class="m-t-0 m-b-15">
+                            </div>
+                            
+                            <tinymce name="description" [(ngModel)]="Vendor.description" [config]="descriptionTextAreaConfig" (ready)="descriptionReady()"></tinymce>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="preloader position-absolute" [hidden]="descriptionTextAreaReady && editVendorReady">
+        <svg class="circular" viewBox="25 25 50 50">
+            <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10"></circle>
+        </svg>
+    </div>
+</div>

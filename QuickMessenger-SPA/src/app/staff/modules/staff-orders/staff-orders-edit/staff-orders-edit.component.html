@@ -1,0 +1,312 @@
+<div class="myModalContainer" [ngClass]="{'has-loading': !editOrderReady || !ridersReady}">
+    <div class="modal-header" [hidden]="!editOrderReady || !ridersReady">
+        <h4 class="modal-title pull-left font-weight-300 font-16">{{initialState.title}}</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="close()" *ngIf="!processing">
+            <i class="mdi mdi-close"></i>
+        </button>
+    </div>
+    <div class="modal-body" [hidden]="!editOrderReady || !ridersReady">
+        <form #myForm="ngForm" (ngSubmit)="save()" class="form-horizontal" autocomplete="off">
+            <input autocomplete="off" name="hidden" type="text" style="display:none;">
+            <div class="col-md-12 p-t-5 p-b-5 button-region no-border-bottom">
+                <button type="submit" class="btn no-m-r pull-right i-rounded i-orange i-grey-disabled font-13 cursor-pointer"
+                    [disabled]="processing || !myForm.form.valid || !changesMade()">
+                    <i class="fa fa-save"></i>
+                    Save
+                    <span *ngIf="processing" class="loader loader-small display-inline-block ng-hide pull-right no-animate"></span>
+                </button>
+            </div>
+
+            <div class="col-md-12 no-p-lr modal-body-container">
+                <!-- Order and Client -->
+                <div class="col-md-12">
+                    <div class="col-md-12 col-lg-6 m-b-25">
+                        <div class="form-group">
+                            <h3 class="box-title">Order</h3>
+                            <hr class="m-t-0 m-b-10">
+                        </div>
+
+                        <div class="form-group display-flex">
+                            <label class="control-label font-weight-300 m-b-5 label-group-one">No.</label>
+                            <div class="flex-grow-100">
+                                <label class="label-group-value">{{Order.trackingId}}</label>
+                            </div>
+                        </div>
+
+                        <div class="form-group display-flex">
+                            <label class="control-label font-weight-300 m-b-5 label-group-one">Type</label>
+                            <div class="flex-grow-100">
+                                <label class="label-group-value">{{Order.service?.name}}</label>
+                            </div>
+                        </div>
+
+                        <div class="form-group display-flex">
+                            <label class="control-label font-weight-300 m-b-5 label-group-one">Date</label>
+                            <div class="flex-grow-100">
+                                <label class="label-group-value">{{Order.date | date:'MMMM dd, yyyy h:mm a'}}</label>
+                            </div>
+                        </div>
+
+                        <div class="form-group display-flex">
+                            <label class="control-label font-weight-300 m-b-5 label-group-one">Rider</label>
+                            <div class="flex-grow-100">
+                                <!--  (onFocus)="selectizeFocus($event)" [errorClass]="input-validation-error" -->
+                                <ng-selectize [config]="riderSelectizeConfig" [options]="Riders" name="rider" [(ngModel)]="Order.riderId"
+                                    [ngClass]="{'input-validation-error': fieldErrors.Rider}" (ngModelChange)="riderChanged()"
+                                    class="small-selectize" required>
+                                </ng-selectize>
+                                <span *ngIf="fieldErrors.Rider" class="field-validation-error white-space-pre">{{fieldErrors.Rider}}</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group display-flex">
+                            <label class="control-label font-weight-300 m-b-5 label-group-one">State</label>
+                            <div class="flex-grow-100">
+                                <!--  (onFocus)="selectizeFocus($event)" [errorClass]="input-validation-error" -->
+                                <ng-selectize [config]="statusSelectizeConfig" [options]="StateOptions" name="state" [(ngModel)]="Order.state"
+                                [ngClass]="{'input-validation-error': fieldErrors.State}" class="small-selectize" required></ng-selectize>
+                                <span *ngIf="fieldErrors.State" class="field-validation-error white-space-pre">{{fieldErrors.State}}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12 col-lg-6 m-b-25" *ngIf="Order.client">
+                        <div class="form-group">
+                            <h3 class="box-title">Client</h3>
+                            <hr class="m-t-0 m-b-10">
+                        </div>
+
+                        <div class="col-md-4 col-lg-4 col-xl-3 hidden-md-up">
+                            <div class="form-group">
+                                <div class="dropzone centered profile-pic no-border small-profile-pic">
+                                    <div class="dz-preview dz-complete dz-image-preview no-m">  
+                                        <div class="dz-image">
+                                            <img *ngIf="Order.client.photoUrl" [src]="Order.client.photoUrl">
+                                            <div *ngIf="!Order.client.photoUrl" class="no-image"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-8 col-lg-8 col-xl-9 no-p-l">
+                            <div class="form-group display-flex">
+                                <label class="control-label font-weight-300 m-b-5 label-group-one">Name</label>
+                                <div class="flex-grow-100 display-contents">
+                                    <label class="label-group-value force-warp">{{Order.client.firstName}} {{Order.client.lastName}}</label>
+                                </div>
+                            </div>
+
+                            <div class="form-group display-flex">
+                                <label class="control-label font-weight-300 m-b-5 label-group-one">Phone</label>
+                                <div class="flex-grow-100 display-contents ">
+                                    <label class="label-group-value">{{Order.client.phoneNumber}}</label>
+                                </div>
+                            </div>
+
+                            <div class="form-group display-flex">
+                                <label class="control-label font-weight-300 m-b-5 label-group-one">Email</label>
+                                <div class="flex-grow-100 display-contents">
+                                    <label class="label-group-value force-warp">{{Order.client.email}}</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4 col-lg-4 col-xl-3 hidden-sm-down">
+                            <div class="form-group">
+                                <div class="dropzone centered profile-pic no-border small-profile-pic">
+                                    <div class="dz-preview dz-complete dz-image-preview no-m">  
+                                        <div class="dz-image">
+                                            <img *ngIf="Order.client.photoUrl" [src]="Order.client.photoUrl">
+                                            <div *ngIf="!Order.client.photoUrl" class="no-image"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment, Delivery and Pickup Info -->
+                <div class="col-md-12">
+                    <div class="col-md-12 col-lg-6 m-b-25">
+                        <div class="col-md-12 m-b-25 no-p-lr">
+                            <div class="form-group">
+                                <h3 class="box-title">Delivery Information</h3>
+                                <hr class="m-t-0 m-b-10">
+                            </div>
+
+                            <div class="form-group display-flex">
+                                <label class="control-label font-weight-300 m-b-5 label-group-one">Address</label>
+                                <div class="flex-grow-100">
+                                    <label class="label-group-value">
+                                        {{Order.address?.firstName}} {{Order.address?.lastName}} <br />
+                                        {{Order.address?.street}}, {{Order.address?.city}}, {{Order.address?.state}}<br/>
+                                        {{Order.address?.phone}}
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="form-group display-flex" *ngIf="Order.state == 'Delivered'">
+                                <label class="control-label font-weight-300 m-b-5 label-group-one">Date</label>
+                                <div class="flex-grow-100">
+                                    <label class="label-group-value">{{Order.timeDelivered | date:'MMMM dd, yyyy h:mm a'}}</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 no-p-lr" *ngIf="Order.type == 'pickup'">
+                            <div class="form-group">
+                                <h3 class="box-title">Pickup Information</h3>
+                                <hr class="m-t-0 m-b-10">
+                            </div>
+
+                            <div class="form-group display-flex">
+                                <label class="control-label font-weight-300 m-b-5 label-group-one">Address</label>
+                                <div class="flex-grow-100">
+                                    <label class="label-group-value">
+                                        {{Order.pickUpItems[0].address?.firstName}} {{Order.pickUpItems[0].address?.lastName}} <br />
+                                        {{Order.pickUpItems[0].address?.street}}, {{Order.pickUpItems[0].address?.city}}, {{Order.pickUpItems[0].address?.state}}<br/>
+                                        {{Order.pickUpItems[0].address?.phone}}
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="form-group display-flex">
+                                <label class="control-label font-weight-300 m-b-5 label-group-one">Date</label>
+                                <div class="flex-grow-100">
+                                    <label class="label-group-value">{{Order.pickupTime | date:'MMMM dd, yyyy h:mm a'}}</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12 col-lg-6 m-b-25">
+                        <div class="form-group">
+                            <h3 class="box-title">Payment Details</h3>
+                            <hr class="m-t-0 m-b-10">
+                        </div>
+
+                        <div class="form-group display-flex">
+                            <label class="control-label font-weight-300 m-b-5 label-group-one">Sub-total</label>
+                            <div class="flex-grow-100">
+                                <label class="label-group-value">₦{{Order.cost - Order.deliveryCharge | number}}</label>
+                            </div>
+                        </div>
+
+                        <div class="form-group display-flex no-m-b">
+                            <label class="control-label font-weight-300 m-b-5 label-group-one">Delivery</label>
+                            <div class="flex-grow-100">
+                                <label class="label-group-value">₦{{Order.deliveryCharge | number}}</label>
+                            </div>
+                        </div>
+
+                        <div class="form-group display-flex border-top-very-light p-t-5">
+                            <label class="control-label font-weight-400 m-b-5 label-group-one">Total</label>
+                            <div class="flex-grow-100">
+                                <label class="label-group-value font-weight-500">₦{{Order.cost | number}}</label>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="col-md-12">
+                    <div class="form-group p-lr-15 m-b-0">
+                        <h3 class="box-title" *ngIf="Order.productOrders && Order.productOrders.length > 0">Products</h3>
+                        <h3 class="box-title" *ngIf="Order.pickUpItems && Order.pickUpItems.length > 0">Items</h3>
+                        <hr class="m-t-0 m-b-0">
+                    </div>
+
+                    <div class="table-responsive col-md-12 form-group" *ngIf="Order.productOrders && Order.productOrders.length > 0">
+                        <table class="table shop-cart color-table info-table">
+                            <thead>
+                                <tr class="sortable">
+                                    <th class="text-left font-weight-500 text-small">
+                                    </th>
+                                    <th class="text-left font-weight-500 text-small">
+                                        Name
+                                    </th>
+                                    <th class="text-right font-weight-500 text-small">
+                                        Unit Price
+                                    </th>
+                                    <th class="text-right font-weight-500 text-small">
+                                        Quantity
+                                    </th>
+                                    <th class="text-right font-weight-500 text-small">
+                                        Amount
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let ProductOrder of Order.productOrders">
+                                    <td class="product-thumbnail text-left small-cart-top-border">
+                                        <img class="bigger" [src]="ProductOrder.product.photos[0].url" alt="" >
+                                    </td>
+                                    <td>
+                                        {{ProductOrder.product.name}}
+                                        <span class="display-block font-11 gray-text" *ngIf="ProductOrder.product.vendor">Sold by <a class="orange-text" href="javascript:void(0)" >{{ProductOrder.product.vendor.name}}</a></span>
+                                    </td>
+                                    <!--<td *ngIf="Product.product.vendor">{{Product.product.vendor.name}}</td>
+                                    <td *ngIf="!Product.product.vendor"></td>-->
+                                    <td class="text-right">&#8358;{{ProductOrder.productPrice | number}}</td>
+                                    <td class="text-right">{{ProductOrder.quantity}}</td>
+                                    <td class="text-right">&#8358;{{getAmount(ProductOrder) | number}}</td>
+                                </tr>
+                                <!--<tr>
+                                    <td class="text-right font-weight-500" colspan="4">Sub-Total</td>
+                                    <td class="text-right">&#8358;{{getTotalAmount() | number}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-right font-weight-500" colspan="4">Delivery</td>
+                                    <td class="text-right">&#8358;{{Order.deliveryCharge | number}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-right font-weight-500" colspan="4">Total</td>
+                                    <td class="text-right">&#8358;{{(getTotalAmount() + Order.deliveryCharge) | number}}</td>
+                                </tr>-->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="table-responsive col-md-12 form-group" *ngIf="Order.pickUpItems && Order.pickUpItems.length > 0">
+                            <table class="table shop-cart color-table info-table">
+                                <thead>
+                                    <tr class="sortable">
+                                        <th class="text-left font-weight-500 text-small"></th>
+                                        <th class="text-left font-weight-500 text-small">Name</th>
+                                        <th class="text-left font-weight-500 text-small">Description</th>
+                                        <th class="text-left font-weight-500 text-small">Value</th>
+                                        <th class="text-left font-weight-500 text-small">Pieces</th>
+                                        <th class="text-left font-weight-500 text-small">Fragile</th>
+                                        <th class="text-left font-weight-500 text-small">Size</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let Item of Order.pickUpItems">
+                                        <td><img  class="bigger" *ngIf="Item.photos && Item.photos.length > 0" [src]="Item.photos[0].url" /></td>
+                                        <td>{{Item.name}}</td>
+                                        <td>{{Item.description}}</td>
+                                        <td>₦{{Item.value | number}}</td>
+                                        <td>{{Item.quantity}}</td>
+                                        <td class="text-capitalize">{{Item.size}}</td>
+                                        <td>{{Item.fragile == true ? 'Yes' : 'No'}}</td>
+                                    </tr>
+                                    <!--<tr>
+                                        <td class="text-left font-weight-500" colspan="2"></td>
+                                        <td class="text-left font-weight-500">Delivery</td>
+                                        <td class="text-left">&#8358;{{Order.cost | number}}</td>
+                                    </tr>-->
+                                </tbody>
+                            </table>
+                    </div>
+                </div>
+            </div>     
+        </form>
+    </div>
+    <div class="preloader position-absolute" [hidden]="ridersReady && editOrderReady">
+        <svg class="circular" viewBox="25 25 50 50">
+            <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10"></circle>
+        </svg>
+    </div>
+</div>

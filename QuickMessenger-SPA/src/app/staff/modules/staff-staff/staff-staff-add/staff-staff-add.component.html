@@ -1,0 +1,217 @@
+<div class="myModalContainer" [ngClass]="{'has-loading': !editStaffReady}">
+    <div class="modal-header" [hidden]="!editStaffReady">
+        <h4 class="modal-title pull-left font-weight-300 font-16">{{initialState.title}}</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="close()" *ngIf="!processing && !deleting">
+            <i class="mdi mdi-close"></i>
+        </button>
+    </div>
+    <div class="modal-body" [hidden]="!editStaffReady">
+        <form #myForm="ngForm" (ngSubmit)="save()" class="form-horizontal">
+            <div class="col-md-12 p-t-5 p-b-5 button-region">
+                <button type="button" class="btn no-m-r pull-right i-rounded i-red-bordered i-grey-disabled font-16 cursor-pointer m-l-5 icon-only" 
+                *ngIf="editMode" [disabled]="processing || deleting" (click)="delete()" ngbTooltip="Delete Staff" placement="top" container="body">
+                    <i class="fa fa-trash-o no-m-r" *ngIf="!deleting"></i>
+                    <span *ngIf="deleting" class="loader loader-small display-inline-block no-animate no-m-l"></span>
+                </button>
+                <button type="submit" class="btn no-m-r pull-right i-rounded i-orange i-grey-disabled font-13 cursor-pointer"
+                [disabled]="processing || deleting || !myForm.form.valid || !telInputDirectiveRef?.isInputValid() || (editMode && !changesMade())">
+                    <i class="fa fa-save"></i>
+                    Save
+                    <span *ngIf="processing" class="loader loader-small display-inline-block ng-hide pull-right no-animate"></span>
+                </button>
+            </div>
+
+            <div class="col-md-12 no-p-lr modal-body-container">  
+                <div class="col-md-12">
+                    <!-- Picture -->
+                    <div class="form-group col-lg-12 col-xl-2">
+                        <div class="form-group">
+                            <app-profile-pic [config]="profilePictureConfig"></app-profile-pic>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12 col-lg-12 col-xl-10 no-p-lr">
+                        <!-- General & Contact -->
+                        <div class="col-md-12 no-p-lr">
+
+                            <div class="form-group col-md-12 col-lg-6 no-m-b">
+                                <div class="form-group">
+                                    <h3 class="box-title" ngbAutofocus >General Information</h3>
+                                    <hr class="m-t-0 m-b-15">
+                                </div>
+
+                                <div class="form-group display-flex">
+                                    <label class="control-label font-weight-300 m-b-5 label-group-one">Last Name</label>
+                                    <div class="flex-grow-100">
+                                        <input type="text" name='lastName' class="form-control flex-grow-100" [(ngModel)]="Staff.lastName"
+                                        required [ngClass]="{'input-validation-error': fieldErrors.LastName, 'edit-mode': editMode}" />
+                                        <span *ngIf="fieldErrors.LastName" class="field-validation-error white-space-pre">{{fieldErrors.LastName}}</span>
+                                    </div>
+                                </div>
+
+                                <div class="form-group display-flex">
+                                    <label class="control-label font-weight-300 m-b-5 label-group-one">First Name</label>
+                                    <div class="flex-grow-100">
+                                        <input type="text" name='firstName' class="form-control flex-grow-100" [(ngModel)]="Staff.firstName"
+                                        required [ngClass]="{'input-validation-error': fieldErrors.FirstName, 'edit-mode': editMode}" />
+                                        <span *ngIf="fieldErrors.FirstName" class="field-validation-error white-space-pre">{{fieldErrors.FirstName}}</span>
+                                    </div>
+                                </div>
+
+                                <div class="form-group display-flex">
+                                    <label class="control-label font-weight-300 m-b-5 label-group-one">Status</label>
+                                    <div class="flex-grow-100">
+                                        <!--  (onFocus)="selectizeFocus($event)" [errorClass]="input-validation-error" -->
+                                        <ng-selectize [config]="statusSelectizeConfig" [options]="StatusOptions" name="status" [(ngModel)]="Staff.deactivated"
+                                        [ngClass]="{'input-validation-error': fieldErrors.Status, 'edit-mode': editMode}" [enabled]="editMode"
+                                        class="small-selectize" required></ng-selectize>
+                                        <span *ngIf="fieldErrors.Status" class="field-validation-error white-space-pre">{{fieldErrors.Status}}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group col-md-12 col-lg-6 no-m-b">
+                                <div class="form-group">
+                                    <h3 class="box-title">Contact Information</h3>
+                                    <hr class="m-t-0 m-b-15">
+                                </div>
+
+                                <div class="form-group display-flex">
+                                    <label class="control-label font-weight-300 m-b-5 label-group-two">Email</label>
+                                    <div class="flex-grow-100">
+                                        <input type="email" name='email' class="form-control" [(ngModel)]="Staff.email"
+                                        required [ngClass]="{'input-validation-error': fieldErrors.Email, 'edit-mode': editMode}" />
+                                        <span *ngIf="fieldErrors.Email" class="field-validation-error white-space-pre">{{fieldErrors.Email}}</span>
+                                    </div>
+                                </div>
+
+                                <div class="form-group display-flex">
+                                    <label class="control-label font-weight-300 m-b-5 label-group-two">Phone</label>
+                                    <div class="flex-grow-100">
+                                        <input type="text" required ng2TelInput class="form-control"
+                                        [ng2TelInputOptions]="{initialCountry: 'ng', utilsScript: 'node_modules/intl-tel-input/build/js/utils.js', preferredCountries: ['ng', 'us', 'gb']}"
+                                        [(ngModel)]="TempPhone" name="phone" (ng2TelOutput)="getNumber($event)" (input)="checkPhoneError()"
+                                        [ngClass]="{'input-validation-error': fieldErrors.Phone, 'edit-mode': editMode}"/>
+                                        <span *ngIf="fieldErrors.Phone" class="field-validation-error m-t-5 white-space-pre">{{fieldErrors.Phone}}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- Role & Gender-->
+                        <div class="col-md-12 no-p-lr">
+                            <!-- Gender -->
+                            <div class="form-group col-md-12 col-lg-6">
+                                <div class="form-group">
+                                    <h3 class="box-title">Gender</h3>
+                                    <hr class="m-t-0 m-b-15">
+                                </div>
+                                <div class="form-group">
+                                    <div class="form-check no-p-l">
+                                        <label class="custom-control custom-radio">
+                                            <input name="Gender" type="radio" class="custom-control-input" value="Female" [(ngModel)]="Staff.gender" />
+                                            <span class="custom-control-indicator"></span>
+                                            <span class="custom-control-description">Female</span>
+                                        </label>
+                                        <label class="custom-control custom-radio">
+                                            <input name="Gender" type="radio" class="custom-control-input" value="Male" [(ngModel)]="Staff.gender" />
+                                            <span class="custom-control-indicator"></span>
+                                            <span class="custom-control-description">Male</span>
+                                        </label>
+                                    </div>
+                                    <span *ngIf="fieldErrors.Gender" class="field-validation-error white-space-pre">{{fieldErrors.Gender}}</span>
+                                </div>
+                            </div>
+
+                            <!-- Role -->
+                            <div class="form-group col-md-12 col-lg-6">
+                                <div class="form-group">
+                                    <h3 class="box-title">Role</h3>
+                                    <hr class="m-t-0 m-b-15">
+                                </div>
+                                <div class="form-group">
+                                    <div class="form-check no-p-l">
+                                        <label class="custom-control custom-radio">
+                                            <input name="Role" type="radio" class="custom-control-input" value="Admin" [(ngModel)]="Staff.role" />
+                                            <span class="custom-control-indicator"></span>
+                                            <span class="custom-control-description">Administrator</span>
+                                        </label>
+                                        <label class="custom-control custom-radio">
+                                            <input name="Role" type="radio" class="custom-control-input" value="FrontDesk" [(ngModel)]="Staff.role" />
+                                            <span class="custom-control-indicator"></span>
+                                            <span class="custom-control-description">Front Desk Operator</span>
+                                        </label>
+                                        <label class="custom-control custom-radio">
+                                            <input name="Role" type="radio" class="custom-control-input" value="Rider" [(ngModel)]="Staff.role" />
+                                            <span class="custom-control-indicator"></span>
+                                            <span class="custom-control-description">Rider</span>
+                                        </label>
+                                    </div>
+                                    <span *ngIf="fieldErrors.Role" class="field-validation-error white-space-pre">{{fieldErrors.Role}}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Address -->
+                        <div class="form-group col-md-12" *ngFor="let address of getActiveAddresses(); let i = index; trackBy: trackAddressByIndex;">
+                            <div class="form-group">
+                                <h3 class="box-title" [ngClass]="{'m-b-5': i > 0}">Address {{i + 1}}  <h6>(Optional)</h6>
+                                    <button *ngIf="i > 0" type="button" class="btn no-m-r pull-right i-rounded i-red-bordered font-14 cursor-pointer icon-only-modal"
+                                    ngbTooltip="Remove Address" placement="top" container="body" (click)="removeAddress(i)">
+                                    <i class="fa fa-remove no-m-r"></i>
+                                    </button>
+                                    <!--<a *ngIf="i > 0" class="pull-right cursor-pointer" (click)="removeAddress(i)"><i class="mdi mdi-close text-error"></i></a>-->
+                                </h3>
+                                <hr class="m-t-0 m-b-15">
+                            </div>
+            
+                            <div class="form-group display-flex">
+                                <label class="control-label font-weight-300 m-b-5 label-group-two">Street</label>
+                                <div class="flex-grow-100">
+                                    <input type="text" name="{{'street' + i}}" class="form-control flex-grow-100" [(ngModel)]="address.street"
+                                        [ngClass]="{'input-validation-error': fieldErrors.Addresses && fieldErrors.Addresses[i].Street, 'edit-mode': editMode}" />
+                                    <span *ngIf="fieldErrors.Addresses && fieldErrors.Addresses[i].Street" class="field-validation-error white-space-pre">{{fieldErrors.Addresses[i].Street}}</span>
+                                </div>
+                            </div>
+        
+                            <div class="form-group col-md-12 col-lg-6 no-p-l md-no-p-lr display-flex">
+                                <label class="control-label font-weight-300 m-b-5 label-group-two">City</label>
+                                <div class="flex-grow-100">
+                                    <input type="text" name="{{'city' + i}}" class="form-control flex-grow-100" [(ngModel)]="address.city"
+                                    [ngClass]="{'input-validation-error': fieldErrors.Addresses && fieldErrors.Addresses[i].City, 'edit-mode': editMode}" />
+                                    <span *ngIf="fieldErrors.Addresses && fieldErrors.Addresses[i].City" class="field-validation-error white-space-pre">{{fieldErrors.Addresses[i].City}}</span>
+                                </div>
+                            </div>
+            
+                            <div class="form-group col-md-12 col-lg-6 no-p-r md-no-p-lr display-flex">
+                                <label class="control-label font-weight-300 m-b-5 label-group-two">State</label>
+                                <div class="flex-grow-100">
+                                    <select name="{{'state' + i}}" class="form-control flex-grow-100" [(ngModel)]="address.state"
+                                    [ngClass]="{'input-validation-error': fieldErrors.Addresses && fieldErrors.Addresses[i].State, 'edit-mode': editMode}">
+                                        <option value="">----- Please select -----</option>
+                                        <option *ngFor="let state of States" [(ngValue)]="state">{{state}}</option>
+                                    </select>
+                                    <span *ngIf="fieldErrors.Addresses && fieldErrors.Addresses[i].State" class="field-validation-error white-space-pre">{{fieldErrors.Addresses[i].State}}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12">
+                            <button type="button" (click)="addNewAddress()" class="btn no-m-r pull-left i-rounded i-black font-13 cursor-pointer">
+                                <i class="fa fa-plus"></i>
+                                Add New Address
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="preloader position-absolute" [hidden]="editStaffReady">
+        <svg class="circular" viewBox="25 25 50 50">
+            <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10"></circle>
+        </svg>
+    </div>
+</div>

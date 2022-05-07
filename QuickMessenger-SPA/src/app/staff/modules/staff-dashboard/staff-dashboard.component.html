@@ -1,0 +1,273 @@
+<div class="row dashboard-cards">
+    <p class="text-right col-md-12 no-m-b">Show statistics for
+        <select class="form-control display-inline-block width-auto m-l-5 small-select" name="currentView"
+        (change)="reloadDashboard($event.target.value)">
+            <option value="0">Today</option>
+            <option value="1">This Week</option>
+            <option value="2">This Month</option>
+        </select>
+    </p>
+    <h4 class="text-right col-md-12 m-b-15">{{currentViewDate}}</h4>
+</div>
+
+<div class="row dashboard-cards">
+    <div class="dashboard-cards col-md-6 col-lg-5 no-p-lr">
+        <!-- Column -->
+        <div class="col-lg-6 col-md-6 col-sm-6">
+            <div class="card">
+                <div class="card-body">
+                    <!-- Row -->
+                    <div class="row">
+                        <div class="col-12 text-center">
+                            <h2 class="m-b-0 m-t-0"><i class="mdi mdi-cart text-themecolor"></i></h2>
+                            <h3 class="m-t-0">{{Counts.total}}</h3>
+                            <h6 class="card-subtitle m-b-0">Total Orders</h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Column -->
+        <div class="col-lg-6 col-md-6 col-sm-6">
+            <div class="card">
+                <div class="card-body">
+                    <!-- Row -->
+                    <div class="row">
+                        <div class="col-12 text-center">
+                            <h2 class="m-b-0 m-t-0"><i class="mdi mdi-truck-delivery text-success"></i></h2>
+                            <h3 class="m-t-0">{{Counts.delivered}}</h3>
+                            <h6 class="card-subtitle m-b-0">Delivered Orders</h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Column -->
+        <div class="col-lg-6 col-md-6 col-sm-6">
+            <div class="card">
+                <div class="card-body">
+                    <!-- Row -->
+                    <div class="row">
+                        <div class="col-12 text-center">
+                            <h2 class="m-b-0 m-t-0"><i class="mdi mdi-truck text-blue"></i></h2>
+                            <h3 class="m-t-0">{{Counts.onTheWay}}</h3>
+                            <h6 class="card-subtitle m-b-0">Enroute Orders</h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Column -->
+        <div class="col-lg-6 col-md-6 col-sm-6">
+            <div class="card">
+                <div class="card-body">
+                    <!-- Row -->
+                    <div class="row">
+                        <div class="col-12 text-center">
+                            <h2 class="m-b-0 m-t-0"><i class="mdi mdi-clock text-warning"></i></h2>
+                            <h3 class="m-t-0">{{Counts.pending}}</h3>
+                            <h6 class="card-subtitle m-b-0">Pending Orders</h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Column -->
+        <div class="col-lg-6 col-md-6 col-sm-6">
+            <div class="card">
+                <div class="card-body">
+                    <!-- Row -->
+                    <div class="row">
+                        <div class="col-12 text-center">
+                            <h2 class="m-b-0 m-t-0"><i class="mdi mdi-motorbike text-black"></i></h2>
+                            <h3 class="m-t-0">{{Counts.averageOrderPerRider}}</h3>
+                            <h6 class="card-subtitle m-b-0">Orders Per Rider</h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Column -->
+        <div class="col-lg-6 col-md-6 col-sm-6">
+            <div class="card">
+                <div class="card-body">
+                    <!-- Row -->
+                    <div class="row">
+                        <div class="col-12 text-center">
+                            <h2 class="m-b-0 m-t-0"><i class="mdi mdi-clock-fast text-purple"></i></h2>
+                            <h3 class="m-t-0">
+                                <span *ngIf="ShowDays">{{ResponseTime.Days}} 
+                                    <span class="font-14">day<span *ngIf="ResponseTime.Days > 1">s</span></span>&nbsp;
+                                </span>
+                                <span *ngIf="ShowHours">{{ResponseTime.Hours}} 
+                                    <span class="font-14">hr<span *ngIf="ResponseTime.Hours > 1">s</span></span>&nbsp;
+                                </span>
+                                <span *ngIf="ShowMinutes">{{ResponseTime.Minutes}} 
+                                    <span class="font-14">min<span *ngIf="ResponseTime.Minutes > 1 || ResponseTime.Minutes == 0">s</span></span>
+                                </span>
+                            </h3>
+                            <!--<h3 class="m-t-0"><span *ngIf="ShowMinutes">{{showMinutes(Counts.averageOrderResponseTime)}}</span></h3>
+                            <h3 class="m-t-0">{{processTimeInMinutes(Counts.averageOrderResponseTime)}}</h3>-->
+                            <h6 class="card-subtitle m-b-0">Response Time</h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-cards col-md-6 col-lg-7">
+        <fusioncharts
+            width="100%"
+            height="445"
+            type="Column2D"
+            dataFormat="JSON"
+            [dataSource]="dataSource">
+        </fusioncharts>
+    </div>
+</div>
+
+<div class="row dashboard-cards">
+    <div class="dashboard-cards col-md-6 col-lg-6">
+        <div class="card">
+            <div>
+                <h4 class="card-body no-p-b">Top Products</h4>
+                <div class="table-responsive col-md-12 no-p-lr card-body no-p-t">
+                    <table class="table shop-cart color-table info-table no-m-b">
+                        <thead>
+                            <tr class="sortable">
+                                <th class="text-left font-weight-500 text-small">
+                                </th>
+                                <th class="text-left font-weight-500 text-small">
+                                    Name
+                                </th>
+                                <th class="text-left font-weight-500 text-small">
+                                    Category
+                                </th>
+                                <th class="text-right font-weight-500 text-small">
+                                    Orders
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let ProductItem of ProductList">
+                                <td><img [src]="ProductItem.photoUrl" /></td>
+                                <td>{{ProductItem.name}}</td>
+                                <td>{{ProductItem.category}}</td>
+                                <td class="text-right">{{ProductItem.orders}}</td>
+                            </tr>
+                            <tr *ngIf="ProductList.length == 0 && !loadingProductList"><td colspan="4">No results found</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-cards col-md-6 col-lg-6">
+        <div class="card">
+            <div>
+                <h4 class="card-body no-p-b">Top Vendors</h4>
+                <div class="table-responsive col-md-12 no-p-lr card-body no-p-t">
+                    <table class="table shop-cart color-table info-table no-m-b">
+                        <thead>
+                            <tr class="sortable">
+                                <th class="text-left font-weight-500 text-small">
+                                </th>
+                                <th class="text-left font-weight-500 text-small">
+                                    Name
+                                </th>
+                                <th class="text-left font-weight-500 text-small">
+                                    City
+                                </th>
+                                <th class="text-right font-weight-500 text-small">
+                                    Orders
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let VendorItem of VendorList">
+                                <td><img [src]="VendorItem.photoUrl" /></td>
+                                <td>{{VendorItem.name}}</td>
+                                <td>{{VendorItem.city}}</td>
+                                <td class="text-right">{{VendorItem.orders}}</td>
+                            </tr>
+                            <tr *ngIf="VendorList.length == 0 && !loadingVendorList"><td colspan="4">No results found</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row dashboard-cards">
+    <div class="dashboard-cards col-md-6 col-lg-6">
+        <div class="card">
+            <div>
+                <h4 class="card-body no-p-b">Top Cities</h4>
+                <div class="table-responsive col-md-12 no-p-lr card-body no-p-t">
+                    <table class="table shop-cart color-table info-table no-m-b">
+                        <thead>
+                            <tr class="sortable">
+                                <th class="text-left font-weight-500 text-small">
+                                    Country
+                                </th>
+                                <th class="text-left font-weight-500 text-small">
+                                    State
+                                </th>
+                                <th class="text-left font-weight-500 text-small">
+                                    City
+                                </th>
+                                <th class="text-left font-weight-500 text-small">
+                                    Orders
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let CityItem of CityList">
+                                <td>{{CityItem.country}}</td>
+                                <td>{{CityItem.state}}</td>
+                                <td>{{CityItem.city}}</td>
+                                <td>{{CityItem.orders}}</td>
+                            </tr>
+                            <tr *ngIf="CityList.length == 0 && !loadingCityList"><td colspan="4">No results found</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-cards col-md-6 col-lg-6">
+        <div class="card">
+            <div>
+                <h4 class="card-body no-p-b">Top Riders</h4>
+                <div class="table-responsive col-md-12 no-p-lr card-body no-p-t">
+                    <table class="table shop-cart color-table info-table no-m-b">
+                        <thead>
+                            <tr class="sortable">
+                                <th class="text-left font-weight-500 text-small">
+                                </th>
+                                <th class="text-left font-weight-500 text-small">
+                                    Name
+                                </th>
+                                <th class="text-right font-weight-500 text-small">
+                                    Orders
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let RiderItem of RiderList">
+                                <td><img [src]="RiderItem.photoUrl" /></td>
+                                <td>{{RiderItem.lastName}} {{RiderItem.firstName}}</td>
+                                <td class="text-right">{{RiderItem.orders}}</td>
+                            </tr>
+                            <tr *ngIf="RiderList.length == 0 && !loadingRiderList"><td colspan="4">No results found</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,178 @@
+<!-- content section -->
+<section id="intro">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <form class="col-lg-8 col-md-12 col-sm-10 center-col md-margin-bottom-four m-b-40" (submit)="search()" action="#">
+          <div class="display-flex">
+            <div class="icon-placeholder-input input-round big-input bg-white display-flex flex-grow-100">
+              <i class="fa fa-search margin-top-half"></i>
+              <input type="text" id="textbox" name="name" class="flex-grow-100" placeholder="Search products and vendors" [(ngModel)]="Search.searchTerm">
+            </div>
+            <button class="btn btn-black btn-medium btn-round margin-left-one no-margin-bottom no-margin-top no-margin-right" type="submit">Search</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="row col-lg-10 col-md-12 col-sm-10 center-col">
+        <div class="col-4 text-center intro_service">
+          <img class="first" src="assets/images/icons/food-delivery.svg" alt="Food delivery" />
+          <p class="intro-text xs-display-none">Buy food from your favourite restaurant and let us deliver it to you</p>
+        </div>
+        <div class="col-4 text-center intro_service">
+          <img class="second" src="assets/images/icons/errand.svg" alt="Errand" />
+          <p class="intro-text  xs-display-none">Send us to your local market and let us get those items for you</p>
+        </div>
+        <div class="col-4 text-center intro_service">
+          <img class="third" src="assets/images/icons/parcel-color.svg" alt="Parcel Pickup" />
+          <p class="intro-text intro-text-2 xs-display-none">Send us to pick up that important parcel on time for you</p>
+        </div>
+    </div>
+    <owl-carousel [options]="SlideOptions" [carouselClasses]="['owl-theme']" class="row xs-display-block" id="sliding-intro-text">
+        <div class="col-10 center-col text-center intro_service">
+          <p class="intro-text">Buy food from your favourite restaurant and let us deliver it to you</p>
+        </div>
+        <div class="col-10 center-col text-center intro_service">
+          <p class="intro-text">Send us to your local market and let us get those items for you</p>
+        </div>
+        <div class="col-10 center-col text-center intro_service">
+          <p class="intro-text">Send us to pick up that important parcel on time for you</p>
+        </div>
+    </owl-carousel>
+  </div>
+</section>
+
+<!-- Our Services -->
+<section id="services" class="content-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 text-center wow fadeInUp">
+                <h3 class="section-title">Our Errands</h3>
+            </div>
+        </div>
+
+        <div class="row">
+                <div class="col-lg-4 col-md-6" *ngFor="let Service of Services">
+                    <div class="features-section row no-padding wow fadeInUp" data-wow-duration="300ms">
+                        <div class="col-md-3 col-sm-2 col-2 no-padding"><img [src]="Service.pictureUrl"></div>
+                        <div class="col-md-9 col-sm-9 col-9 no-padding text-left f-right">
+                            <h5><a routerLink="/errand/{{Service.nameId}}">{{Service.name}}</a></h5>
+                            <div class="separator-line bg-orange"></div>
+                            <div [innerHTML]="Service.description | safeHtml"></div>
+                        </div>
+                    </div>
+                </div>
+        </div>
+    </div>
+</section>
+<!-- End Our Services -->
+
+
+<!-- Testimonials -->
+<section id="testimonials" class="wow fadeIn bg-light-gray">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 text-center wow fadeInUp">
+                <h3 class="section-title">Meet Happy Clients</h3>
+            </div>
+        </div>
+        <div class="row xs-display-none sm-p-l-15">
+            <!-- testimonials item -->
+            <div class="col-md-4 col-sm-4 testimonial testimonial-style2 text-center wow fadeInUp sm-margin-bottom-ten sm-no-padding-left">
+                <div class="bg-white padding-three no-padding-top">
+                    <img src="assets/images/599x499.png" alt=""/>
+                    <p class="center-col width-90">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley.</p>
+                    <span class="name black-text">Jeremy Dupont - Apple</span>
+                    <i class="fa fa-quote-left small-icon orange-text display-block margin-five no-margin-bottom"></i>
+                </div>
+            </div>
+            <!-- end testimonials item -->
+            <!-- testimonials item -->
+            <div class="col-md-4 col-sm-4 testimonial testimonial-style2 text-center wow fadeInUp sm-margin-bottom-ten sm-no-padding-left">
+                <div class="bg-white padding-three no-padding-top">
+                    <img src="assets/images/599x499.png" alt=""/>
+                    <p class="center-col width-90">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley.</p>
+                    <span class="name black-text">Steve Anders - Facebook</span>
+                    <i class="fa fa-quote-left small-icon orange-text display-block margin-five no-margin-bottom"></i>
+                </div>
+            </div>
+            <!-- end testimonials item -->
+            <!-- testimonials item -->
+            <div class="col-md-4 col-sm-4 testimonial testimonial-style2 text-center wow fadeInUp sm-no-padding-left">
+                <div class="bg-white padding-three no-padding-top">
+                    <img src="assets/images/599x499.png" alt=""/>
+                    <p class="center-col width-90">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley.</p>
+                    <span class="name black-text">Bryan Johnson - Apple</span>
+                    <i class="fa fa-quote-left small-icon orange-text display-block margin-five no-margin-bottom"></i>
+                </div>
+            </div>
+            <!-- end testimonials item -->
+        </div>
+
+
+        <owl-carousel [options]="SlideOptions2" [carouselClasses]="['owl-theme', 'owl-navigation-1']" class="row xs-display-block">
+            <!-- testimonials item -->
+            <div class="col-10 center-col testimonial testimonial-style2 text-center wow fadeInUp">
+                <div class="padding-three no-padding-top">
+                    <img src="assets/images/599x499.png" alt=""/>
+                    <p class="center-col width-90">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley.</p>
+                    <span class="name black-text">Jeremy Dupont - Apple</span>
+                    <i class="fa fa-quote-left small-icon orange-text display-block margin-five no-margin-bottom"></i>
+                </div>
+            </div>
+            <!-- end testimonials item -->
+            <!-- testimonials item -->
+            <div class="col-10 center-col testimonial testimonial-style2 text-center wow fadeInUp sm-margin-bottom-ten">
+                <div class="padding-three no-padding-top">
+                    <img src="assets/images/599x499.png" alt=""/>
+                    <p class="center-col width-90">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley.</p>
+                    <span class="name black-text">Steve Anders - Facebook</span>
+                    <i class="fa fa-quote-left small-icon orange-text display-block margin-five no-margin-bottom"></i>
+                </div>
+            </div>
+            <!-- end testimonials item -->
+            <!-- testimonials item -->
+            <div class="col-10 center-col testimonial testimonial-style2 text-center wow fadeInUp">
+                <div class="padding-three no-padding-top">
+                    <img src="assets/images/599x499.png" alt=""/>
+                    <p class="center-col width-90">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley.</p>
+                    <span class="name black-text">Bryan Johnson - Apple</span>
+                    <i class="fa fa-quote-left small-icon orange-text display-block margin-five no-margin-bottom"></i>
+                </div>
+            </div>
+            <!-- end testimonials item -->
+        </owl-carousel>
+    </div>
+</section>
+<!-- End Testimonials -->
+
+
+<!-- Vendors -->
+<section id="vendors" class="wow fadeIn bg-white">
+  <div class="container">
+      <div class="row">
+          <div class="col-md-12 text-center wow fadeInUp">
+              <h3 class="section-title">Our Vendors</h3>
+          </div>
+      </div>
+      <div class="row">             	
+          <div class="col-md-12 grid-gallery overflow-hidden" >
+              <ul class="masonry-items row">
+                  <!-- work item ( external page ) -->
+                  <li class="col-md-4 col-sm-4 col-6 m-b-10" *ngFor="let Vendor of Vendors">
+                      <figure>
+                          <div class="gallery-img"><a routerLink="/vendors/{{Vendor.id}}"><img [src]="Vendor.imageUrl" alt=""></a></div>
+                          <figcaption>
+                              <h3 class="black-text">{{Vendor.name}}</h3>
+                              <p>{{Vendor.address}}</p>
+                          </figcaption>
+                      </figure>
+                  </li>
+                  <!-- end work item -->                
+              </ul>
+          </div>
+      </div>
+  </div>
+</section>
+<!-- End Vendors -->
+<!-- end content section -->

@@ -1,0 +1,74 @@
+<!-- search section -->
+<section class="bg-gray content-top-margin p-t-10 p-b-10 sm-padding-two">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 center-col">
+                <form (submit)="globalSearch()" action="#">
+                    <div class="display-flex">
+                        <div class="display-flex flex-grow-100 special-search input-round bg-white">
+                            <select class="width-auto no-m-b bg-white" name="section" [(ngModel)]="Search.section">
+                                <option value="products">Product</option>
+                                <option value="vendors">Vendor</option>
+                            </select>
+                            <input type="text" id="textbox" name="name" class="flex-grow-100" placeholder="Search products and vendors" [(ngModel)]="Search.searchTerm">
+                        </div>
+                        <button class="btn btn-orange btn-small btn-round font-12 margin-left-one no-margin-bottom no-margin-top no-margin-right" type="submit">Search</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- end search section -->
+
+<!-- head section -->
+<section class="content-top-margin page-title page-title-small border-bottom-light bg-white no-margin-top">
+  <div class="container">
+      <div class="row">
+          <div class="col-lg-9 col-md-12 wow fadeInUp" data-wow-duration="300ms">
+              <!-- page title -->
+              <h1 class="black-text">Vendors</h1>
+              <!-- end page title -->
+          </div>
+          <div class="col-lg-3 col-md-12 breadcrumb text-uppercase wow fadeInUp sm-display-none text-right" data-wow-duration="600ms">
+              <!-- breadcrumb -->
+              <ul>
+                  <li><a routerLink="/">Home</a></li>
+                  <li class="gray-text font-weight-300">Vendors</li>
+              </ul>
+              <!-- end breadcrumb -->
+          </div>
+      </div>
+  </div>
+</section>
+<!-- end head section -->
+
+<!-- vendor list-->
+<section class="padding-four bg-white">
+    <div class="container sm-container-fluid" infiniteScroll [infiniteScrollDistance]="2" [infiniteScrollThrottle]="50" (scrolled)="onScroll()">
+        <div class="row vendor-list">
+            <div class="col-12 margin-three no-margin-top" *ngFor="let VendorGroup of VendorGroups">
+                <h2 class="margin-one no-margin-top">{{VendorGroup.title}}</h2>
+                <div class="row no-margin-left no-margin-top margin-two">
+                    <a class="col-lg-3 col-md-4 col-sm-4 no-padding-left vendor-list-item" *ngFor="let Vendor of VendorGroup.vendors" routerLink="{{Vendor.id}}">
+                        <div class="display-inline-block f-left margin-right-four">
+                            <img *ngIf="Vendor.imageUrl" [src]="Vendor.imageUrl">
+                            <div *ngIf="!Vendor.imageUrl" class="vendor-logo-replacement">{{Vendor.name.substring(0, 1)}}</div>
+                        </div>
+                        <div>
+                            <p class="letter-spacing-1 truncate no-m-b font-15">{{Vendor.name}}</p>
+                            <p class="letter-spacing-1 truncate no-m-b gray-text">{{Vendor.address}}</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="bottom-preloader margin-three" [hidden]="!backgroundLoadingItems">
+            <svg class="circular" viewBox="25 25 50 50">
+                <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10"></circle>
+            </svg>
+        </div>
+    </div>
+</section>
+<!-- end product list -->

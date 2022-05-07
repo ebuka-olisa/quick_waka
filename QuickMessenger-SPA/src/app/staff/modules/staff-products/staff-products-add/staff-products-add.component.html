@@ -1,0 +1,242 @@
+<div class="myModalContainer" [ngClass]="{'has-loading': !descriptionTextAreaReady || !categoriesReady || !vendorsReady || !editProductReady}">
+    <div class="modal-header" [hidden]="!descriptionTextAreaReady || !categoriesReady || !vendorsReady || !editProductReady">
+        <h4 class="modal-title pull-left font-weight-300 font-16">{{initialState.title}}</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="close()" *ngIf="!processing">
+            <i class="mdi mdi-close"></i>
+        </button>
+    </div>
+    <div class="modal-body" [hidden]="!descriptionTextAreaReady || !categoriesReady || !vendorsReady || !editProductReady">
+        <form #myForm="ngForm" (ngSubmit)="save()" class="form-horizontal" autocomplete="off">
+            <input autocomplete="off" name="hidden" type="text" style="display:none;">
+            <div class="col-md-12 p-t-5 p-b-5 button-region no-border-bottom">
+                <button type="button" class="btn no-m-r pull-right i-rounded i-red-bordered i-grey-disabled font-16 cursor-pointer m-l-5 icon-only" 
+                    *ngIf="editMode" [disabled]="processing || deleting || deactivating" (click)="delete()" ngbTooltip="Delete" placement="top" container="body">
+                    <i class="fa fa-trash-o no-m-r" *ngIf="!deleting"></i>
+                    <span *ngIf="deleting" class="loader loader-small display-inline-block no-animate no-m-l"></span>
+                </button>
+                <!--<button type="button" class="btn no-m-r pull-right i-rounded i-black-bordered i-grey-disabled font-16 cursor-pointer m-l-5 icon-only" 
+                    *ngIf="editMode" [disabled]="processing || deleting || deactivating" (click)="deactivate()" ngbTooltip="Deactivate" placement="top" container="body">
+                    <i class="fa fa-ban no-m-r" *ngIf="!deactivating"></i>
+                    <span *ngIf="deactivating" class="loader loader-small display-inline-block no-animate no-m-l"></span>
+                </button>-->
+                <button type="button" *ngIf="!editMode" (click)="selectTab(1)" [disabled]="!goToNextTab() || !myForm.form.valid"
+                class="btn no-m-r pull-right i-rounded i-black i-grey-disabled font-13 cursor-pointer m-l-5 icon-only">
+                    <i class="fa fa-chevron-right no-m-r"></i>
+                </button>
+                <button type="submit" class="btn no-m-r pull-right i-rounded i-orange i-grey-disabled font-13 cursor-pointer"
+                    [disabled]="processing || deleting || deactivating || !myForm.form.valid || (editMode && !changesMade()) || Pictures.length == 0">
+                    <i class="fa fa-save"></i>
+                    Save
+                    <span *ngIf="processing" class="loader loader-small display-inline-block ng-hide pull-right no-animate"></span>
+                </button>
+                <button type="button" *ngIf="!editMode" (click)="selectTab(0)" [disabled]="!goToPreviousTab()"
+                class="btn pull-right i-rounded i-black i-grey-disabled font-13 cursor-pointer m-r-5 icon-only">
+                    <i class="fa fa-chevron-left no-m-r"></i>
+                </button>
+            </div>
+
+            <tabset class="col-md-12 no-p-lr" #myTabSet>
+                <tab heading="Details" id="details_tab" (selectTab)="tabSelected(0)">
+                    <div class="modal-body-container">
+                        <!-- Name -->
+                        <div class="col-md-12">
+                            <div class="form-group p-lr-15">
+                                <h3 class="box-title">Name</h3>
+                                <hr class="m-t-0 m-b-10">
+                            </div>  
+                            <div class="form-group display-flex p-lr-15">
+                                <div class="flex-grow-100">
+                                    <input type="text" name='name' class="form-control big-input flex-grow-100" [(ngModel)]="Product.name"
+                                    required [ngClass]="{'input-validation-error': fieldErrors.Name}" />
+                                    <span *ngIf="fieldErrors.Name" class="field-validation-error white-space-pre">{{fieldErrors.Name}}</span>
+                                </div>
+                            </div>
+                        </div>
+        
+                        <div class="col-md-12 m-t-5 m-b-10">
+                            <!-- Price, Vendor and Description -->
+                            <div class="col-md-12 col-lg-7">
+                                <div class="form-group">
+                                    <h3 class="box-title">Accsessibility</h3>
+                                    <hr class="m-t-0 m-b-10">
+                                </div>
+        
+                                <!-- Status -->
+                                <div class="form-group display-flex m-b-20">
+                                    <label class="control-label font-weight-300 m-b-5 label-group-one">Status</label>
+                                    <div class="flex-grow-100">
+                                        <!--(onFocus)="selectizeFocus($event)" [errorClass]="input-validation-error" -->
+                                        <ng-selectize [config]="statusSelectizeConfig" [options]="StatusOptions" 
+                                         name="status" [(ngModel)]="Product.deactivated"
+                                        [ngClass]="{'input-validation-error': fieldErrors.Status}" [enabled]="editMode"></ng-selectize>
+                                        <span *ngIf="fieldErrors.Status" class="field-validation-error white-space-pre">{{fieldErrors.Status}}</span>
+                                    </div>
+                                </div>
+        
+                                <!-- Availability -->
+                                <div class="form-group display-flex m-b-20">
+                                    <label class="control-label font-weight-300 m-b-5 label-group-one">Availability</label>
+                                    <div class="flex-grow-100">
+                                        <!--(onFocus)="selectizeFocus($event)" [errorClass]="input-validation-error" -->
+                                        <ng-selectize [config]="statusSelectizeConfig" [options]="AvailabilityOptions" 
+                                         name="availability" [(ngModel)]="Product.outOfStock"
+                                        [ngClass]="{'input-validation-error': fieldErrors.Availability}" [enabled]="editMode"></ng-selectize>
+                                        <span *ngIf="fieldErrors.Availability" class="field-validation-error white-space-pre">{{fieldErrors.Availability}}</span>
+                                    </div>
+                                </div>
+
+                                <!-- Service -->
+                                <div class="form-group display-flex m-b-25">
+                                    <label class="control-label font-weight-300 m-b-5 label-group-one">Service</label>
+                                    <div class="flex-grow-100">
+                                        <!--(onFocus)="selectizeFocus($event)" [errorClass]="input-validation-error"-->
+                                        <ng-selectize [config]="serviceSelectizeConfig" [options]="Services" required
+                                            name="service" [(ngModel)]="Product.serviceId" 
+                                            [ngClass]="{'input-validation-error': fieldErrors.Service}" 
+                                            (ngModelChange)="serviceChanged()"></ng-selectize>
+                                        <span *ngIf="fieldErrors.Service" class="field-validation-error white-space-pre">{{fieldErrors.Service}}</span>
+                                    </div>
+                                </div>
+        
+                                <!-- Decsription -->
+                                <div class="form-group md-hide p-t-10">
+                                    <h3 class="box-title" ngbAutofocus>Description <h6>(Optional)</h6></h3>
+                                    <hr class="m-t-0 m-b-10">
+                                </div>
+                                <div class="form-group md-hide">
+                                    <tinymce name="description" [(ngModel)]="Product.description" [config]="descriptionTextAreaConfig" (ready)="descriptionReady()"></tinymce>          
+                                </div>
+                            </div>
+        
+                            <!-- Sales, Category and Properties-->
+                            <div class="col-md-12 col-lg-5">
+
+                                <div class="form-group">
+                                    <h3 class="box-title">Sales</h3>
+                                    <hr class="m-t-0 m-b-10">
+                                </div>
+
+                                <!-- Price -->
+                                <div class="form-group display-flex m-b-20">
+                                    <label class="control-label font-weight-300 m-b-5 label-group-one">Price (&#8358;)</label>
+                                    <div class="flex-grow-100">
+                                        <input type="number" name='price' class="form-control flex-grow-100 big-input m-b-0" [(ngModel)]="Product.price"
+                                        required [ngClass]="{'input-validation-error': fieldErrors.Price}" />
+                                        <span *ngIf="fieldErrors.Price" class="field-validation-error white-space-pre">{{fieldErrors.Price}}</span>
+                                    </div>
+                                </div>
+
+                                <!-- Vendor -->
+                                <div class="form-group display-flex m-b-25">
+                                    <label class="control-label font-weight-300 m-b-0 label-group-one">Vendor <span class="display-block font-10 opacity-5">(Optional)</span></label>
+                                    <div class="flex-grow-100">
+                                        <!--  (onFocus)="selectizeFocus($event)" [errorClass]="input-validation-error"-->
+                                        <ng-selectize [config]="vendorSelectizeConfig" [options]="Vendors" name="vendor" [(ngModel)]="Product.vendorId"
+                                        [ngClass]="{'input-validation-error': fieldErrors.Vendor}" (ngModelChange)="vendorChanged()"
+                                        class="flex-grow-100"></ng-selectize>
+                                        <span *ngIf="fieldErrors.Vendor" class="field-validation-error white-space-pre">{{fieldErrors.Vendor}}</span>
+                                    </div>
+                                </div>
+
+                                <!-- Category -->
+                                <div class="form-group">
+                                    <h3 class="box-title">Category</h3>
+                                    <hr class="m-t-0 m-b-10">
+                                </div>
+        
+                                <div class="form-group display-flex m-b-25">
+                                    <!--<label class="control-label font-weight-300 m-b-5 label-group-one">Category</label>-->
+                                    <div class="flex-grow-100">
+                                        <!-- (onFocus)="selectizeFocus($event)" [errorClass]="input-validation-error" -->
+                                        <ng-selectize [config]="categorySelectizeConfig" [options]="Categories" required
+                                        name="category" [(ngModel)]="Product.prod_CategoryId" (ngModelChange)="getExtraAttributes()"
+                                        [ngClass]="{'input-validation-error': fieldErrors.Category}"></ng-selectize>
+                                        <span *ngIf="fieldErrors.Category" class="field-validation-error white-space-pre">{{fieldErrors.Category}}</span>
+                                    </div>
+                                </div>
+        
+                                <!-- Extra Attributes -->
+                                <div class="form-group m-t-25">
+                                    <h3 class="box-title">Extra Attributes <h6>(Optional)</h6></h3>
+                                    <hr class="m-t-0 m-b-5">
+                                    <h6>Select a category to view the extra attributes associated with it</h6>
+                                    <!--<button type="button" class="btn no-m-r pull-left i-rounded i-orange-simple font-12 cursor-pointer"
+                                        (click)="addExtraAttribute()" [disabled]="retrievingAttributes || Product.categoryId == null || Product.categoryId == ''">
+                                        <i class="fa fa-plus"></i> Add Attribute
+                                        <span *ngIf="retrievingAttributes" class="loader loader-small display-inline-block no-animate no-m-l"></span>
+                                    </button>-->
+                                </div>
+        
+                                <div class="form-group col-md-12 m-t-15 no-p-lr">
+                                    <table class="table shop-cart info-table modal-table">
+                                        <thead>
+                                            <tr class="sortable">
+                                                <!--<th></th>-->
+                                                <th class="text-left font-weight-400 font-12 opacity-5">
+                                                    Name
+                                                </th>
+                                                <th class="text-left font-weight-400 font-12 opacity-5">
+                                                    Measurement Metric
+                                                </th>
+                                                <th class="text-left font-weight-400 font-12 opacity-5">
+                                                    Value
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr *ngFor="let ExtraAttribute of ExtraAttributes; let i = index;" class="cursor-pointer">
+                                                <td class="text-black">{{ExtraAttribute.name}}</td>
+                                                <td>
+                                                    <select name="{{'property' + i}}" class="form-control flex-grow-100 no-m-b" [(ngModel)]="ExtraAttribute.selectedProperty">
+                                                        <option *ngFor="let property of ExtraAttribute.properties" [value]="property.id">{{property.measurementTypeSymbol}}</option>
+                                                    </select>
+                                                </td>
+                                                <td>
+                                                    <input type="text" name="{{'value' + i}}" class="form-control no-m-b" [(ngModel)]="ExtraAttribute.value" />
+                                                </td>
+                                            </tr>
+                                            <tr *ngIf="ExtraAttributes.length == 0"><td colspan="2">No extra attributes</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+        
+                        <div class="col-md-12 m-t-5 lg-hide">
+                            <!-- Description -->
+                            <div class="form-group p-lr-15">
+                                <h3 class="box-title" ngbAutofocus>Description <h6>(Optional)</h6></h3>
+                                <hr class="m-t-0 m-b-10">
+                            </div>
+                            <div class="form-group p-lr-15">
+                                <tinymce name="description" [(ngModel)]="Product.description" [config]="descriptionTextAreaConfig" (ready)="descriptionReady()"></tinymce>          
+                            </div>
+                        </div>
+                    </div>
+                </tab>
+                <tab heading="Pictures" id="pictures_tab" (selectTab)="tabSelected(1)">
+                    <div class="modal-body-container">
+                        <!-- Name -->
+                        <div class="col-md-12">
+                            <div class="form-group p-lr-15">
+                                <h3 class="box-title">Picture</h3>
+                                <hr class="m-t-0 m-b-15">
+                                <h6 class="card-subtitle">Select pictures for this product (minimum of 1 and maximum of 5)</h6>
+                            </div>  
+                            <div class="form-group p-lr-15">
+                                <app-multiple-pics [config]="productPicturesConfig" (picturesUpdated)="setPictures($event)" (pictureDeleted)="deletePicture($event)" ></app-multiple-pics>
+                            </div>
+                        </div>
+                    </div>
+                </tab>
+            </tabset>
+            
+        </form>
+    </div>
+
+    <div class="preloader position-absolute" [hidden]="descriptionTextAreaReady && categoriesReady && vendorsReady && editProductReady">
+        <svg class="circular" viewBox="25 25 50 50">
+            <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10"></circle>
+        </svg>
+    </div>
+</div>

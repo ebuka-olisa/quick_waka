@@ -1,0 +1,95 @@
+<div class="tab-pane active" id="settings" role="tabpanel" aria-expanded="true">
+  <div class="card-body">
+      <form class="form-horizontal" #myForm="ngForm" (ngSubmit)="save()">
+          <div class="p-lr-5">
+            <!-- Contact Information -->
+            <div class="form-group m-b-20">
+                <h3 class="box-title font-16 no-m-b" ngbAutofocus >Contact Information</h3>
+                <hr class="m-t-0 m-b-15">
+            </div>
+
+            <div class="form-group display-flex">
+                <label class="control-label font-weight-300 m-b-5 label-group-one">Email</label>
+                <div class="flex-grow-100">
+                    <input type="email" name='email' class="form-control flex-grow-100" [(ngModel)]="User.email"
+                    required [ngClass]="{'input-validation-error': fieldErrors.Email}" />
+                    <span *ngIf="fieldErrors.Email" class="field-validation-error font-12">{{fieldErrors.Email}}</span>
+                </div>
+            </div>
+
+            <div class="form-group display-flex">
+                <label class="control-label font-weight-300 m-b-5 label-group-one">Phone</label>
+                <div class="flex-grow-100">
+                    <input type="text" required ng2TelInput class="form-control"
+                    [ng2TelInputOptions]="{initialCountry: 'ng', utilsScript: 'node_modules/intl-tel-input/build/js/utils.js', preferredCountries: ['ng', 'us', 'gb']}"
+                    [(ngModel)]="TempPhone" name="phone" (ng2TelOutput)="getNumber($event)" (input)="checkPhoneError()"
+                    [ngClass]="{'input-validation-error': fieldErrors.Phone}"/>
+                    <span *ngIf="fieldErrors.Phone" class="field-validation-error m-t-5 font-12">{{fieldErrors.Phone}}</span>
+                </div>
+            </div>
+
+            <!-- Address -->
+            <div class="form-group col-md-12 no-p-lr m-t-20" *ngFor="let address of getActiveAddresses(); let i = index; trackBy: trackAddressByIndex;">
+                <div class="form-group">
+                    <h3 class="box-title" [ngClass]="{'m-b-5': i > 0}">Address {{i + 1}}  <h6 class="display-inline">(Optional)</h6>
+                        <button *ngIf="i > 0" type="button" class="btn no-m-r pull-right i-rounded i-red-bordered font-14 cursor-pointer icon-only-modal"
+                        ngbTooltip="Remove Address" placement="top" container="body" (click)="removeAddress(i)">
+                            <i class="fa fa-remove no-m-r"></i>
+                        </button>
+                        <!--<a *ngIf="i > 0" class="pull-right cursor-pointer" (click)="removeAddress(i)"><i class="mdi mdi-close text-error"></i></a>-->
+                    </h3>
+                    <hr class="m-t-0 m-b-15">
+                </div>
+
+                <div class="form-group display-flex">
+                    <label class="control-label font-weight-300 m-b-5 label-group-two">Street</label>
+                    <div class="flex-grow-100">
+                        <input type="text" name="{{'street' + i}}" class="form-control flex-grow-100" [(ngModel)]="address.street"
+                            [ngClass]="{'input-validation-error': fieldErrors.Addresses && fieldErrors.Addresses[i].Street, 'edit-mode': editMode}" />
+                        <span *ngIf="fieldErrors.Addresses && fieldErrors.Addresses[i].Street" class="field-validation-error font-12">{{fieldErrors.Addresses[i].Street}}</span>
+                    </div>
+                </div>
+
+                <div class="form-group col-md-12 col-lg-6 no-p-l md-no-p-lr display-flex">
+                    <label class="control-label font-weight-300 m-b-5 label-group-two">City</label>
+                    <div class="flex-grow-100">
+                        <input type="text" name="{{'city' + i}}" class="form-control flex-grow-100" [(ngModel)]="address.city"
+                        [ngClass]="{'input-validation-error': fieldErrors.Addresses && fieldErrors.Addresses[i].City, 'edit-mode': editMode}" />
+                        <span *ngIf="fieldErrors.Addresses && fieldErrors.Addresses[i].City" class="field-validation-error font-12">{{fieldErrors.Addresses[i].City}}</span>
+                    </div>
+                </div>
+
+                <div class="form-group col-md-12 col-lg-6 no-p-r md-no-p-lr display-flex">
+                    <label class="control-label font-weight-300 m-b-5 label-group-two">State</label>
+                    <div class="flex-grow-100">
+                        <select name="{{'state' + i}}" class="form-control flex-grow-100" [(ngModel)]="address.state"
+                        [ngClass]="{'input-validation-error': fieldErrors.Addresses && fieldErrors.Addresses[i].State, 'edit-mode': editMode}">
+                            <option value="">----- Please select -----</option>
+                            <option *ngFor="let state of States" [(ngValue)]="state">{{state}}</option>
+                        </select>
+                        <span *ngIf="fieldErrors.Addresses && fieldErrors.Addresses[i].State" class="field-validation-error font-12">{{fieldErrors.Addresses[i].State}}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-12 no-p-lr">
+                <button type="button" (click)="addNewAddress()" class="btn no-m-r pull-left i-rounded i-black font-12 cursor-pointer">
+                    <i class="fa fa-plus"></i>
+                    Add New Address
+                </button>
+            </div>
+
+            <div class="form-group m-b-40 m-t-20 col-md-12 no-p-lr">
+                <div class="col-sm-12 text-right">
+                    <button class="btn m-r-5 i-rounded i-orange i-bordered i-grey-disabled" type="submit" 
+                    [disabled]="processing || !myForm.form.valid || !changesMade()">
+                        Update
+                        <span *ngIf="processing" class="loader loader-small display-inline-block ng-hide pull-right no-animate"></span>
+                    </button>
+                    <button class="btn no-m-r i-rounded i-bordered" type="button" [disabled]="processing" (click)="reset()">Cancel</button>
+                </div>
+            </div>
+        </div>
+      </form>
+  </div>
+</div>

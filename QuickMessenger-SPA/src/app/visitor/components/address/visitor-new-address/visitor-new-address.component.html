@@ -1,0 +1,102 @@
+<div class="myModalContainer">
+    <div class="modal-header">
+        <h4 class="modal-title pull-left font-16 text-uppercase font-weight-600 letter-spacing-2" *ngIf="!editMode">
+            <a (click)="close()" href="javascript:void(0)" class="cursor-pointer"><i class="fa fa-chevron-left m-r-5"></i></a>New Address
+        </h4>
+        <h4 class="modal-title pull-left font-16 text-uppercase font-weight-600 letter-spacing-2" *ngIf="editMode">
+            <a (click)="close()" href="javascript:void(0)" class="cursor-pointer"><i class="fa fa-chevron-left m-r-5"></i></a>Edit Address
+        </h4>
+        <!--<button type="button" class="close pull-right" aria-label="Close" (click)="close()" *ngIf="!processing && !deleting">
+            <i class="mdi mdi-close"></i>
+        </button>-->
+    </div>
+    <div class="modal-body">
+      <div class="col-md-12 p-t-5 p-b-5 button-region text-right">
+          <button type="button" class="btn no-m-r cursor-pointer btn-orange btn-round btn-small no-margin" 
+          [disabled]="processing" (click)="save()">
+              <i class="fa fa-save no-m-l text-white"></i> Save Address
+              <span *ngIf="processing" class="loader loader-small display-inline-block no-animate no-m-l"></span>
+          </button>
+      </div>
+  
+      <div class="col-12 no-p-lr modal-body-container">  
+        <div class="col-12 m-b-20">
+            <form class="col-12 row no-margin no-padding">
+                <div class="form-group col-sm-6 col-12">
+                    <!-- label -->
+                    <label for="last_name" class="font-14 black-text margin-bottom-half text-small font-weight-600 text-uppercase">Last Name</label>
+                    <!-- end label -->
+                    <!-- input -->
+                    <input type="text" id="last_name" name="last_name" class="input-round no-margin" [(ngModel)]="User.lastName"
+                    [ngClass]="{'input-validation-error': fieldErrors.LastName}">
+                    <span *ngIf="fieldErrors.LastName" class="field-validation-error">{{fieldErrors.LastName}}</span>
+                    <!-- end input -->
+                </div>
+                <div class="form-group col-sm-6 col-12">
+                    <!-- label -->
+                    <label for="first_name" class="font-14 black-text margin-bottom-half text-small font-weight-600 text-uppercase">First Name</label>
+                    <!-- end label -->
+                    <!-- input -->
+                    <input type="text" id="first_name" name="first_name" class="input-round no-margin" [(ngModel)]="User.firstName"
+                    [ngClass]="{'input-validation-error': fieldErrors.FirstName}">
+                    <span *ngIf="fieldErrors.FirstName" class="field-validation-error">{{fieldErrors.FirstName}}</span>
+                    <!-- end input -->
+                </div>
+                <div class="form-group col-12">
+                    <!-- label -->
+                    <label for="phone" class="font-14 black-text margin-bottom-half text-small font-weight-600 text-uppercase">Phone</label>
+                    <!-- end label -->
+                    <!-- input -->
+                    <input type="text" required ng2TelInput class="input-round no-margin"
+                        [ng2TelInputOptions]="{initialCountry: 'ng', utilsScript: 'node_modules/intl-tel-input/build/js/utils.js', preferredCountries: ['ng', 'us', 'gb']}"
+                        [(ngModel)]="TempPhone" name="phone" (ng2TelOutput)="getNumber($event)" (input)="checkPhoneError()"
+                        [ngClass]="{'input-validation-error': fieldErrors.Phone}"/>
+                    <span *ngIf="fieldErrors.Phone" class="field-validation-error">{{fieldErrors.Phone}}</span>
+                    <!-- end input -->
+                </div>
+                <div class="form-group col-12">
+                    <!-- label -->
+                    <label for="address" class="font-14 black-text margin-bottom-half text-small font-weight-600 text-uppercase">Address</label>
+                    <!-- end label -->
+                    <!-- input -->
+                    <textarea id="address" name="address" class="input-round no-margin" [(ngModel)]="User.street"
+                    [ngClass]="{'input-validation-error': fieldErrors.Street}"></textarea>
+                    <span *ngIf="fieldErrors.Street" class="field-validation-error">{{fieldErrors.Street}}</span>
+                    <!-- end input -->
+                </div>
+                <div class="form-group col-sm-6 col-12">
+                    <!-- label -->
+                    <label for="city" class="font-14 black-text margin-bottom-half text-small font-weight-600 text-uppercase">City</label>
+                    <!-- end label -->
+                    <!-- input -->
+                    <input type="text" id="city" name="city" class="input-round no-margin" [(ngModel)]="User.city"
+                    [ngClass]="{'input-validation-error': fieldErrors.City}">
+                    <span *ngIf="fieldErrors.City" class="field-validation-error">{{fieldErrors.City}}</span>
+                    <!-- end input -->
+                </div>
+                <div class="form-group col-sm-6 col-12">
+                    <!-- label -->
+                    <label for="state" class="font-14 black-text margin-bottom-half text-small font-weight-600 text-uppercase">State</label>
+                    <!-- end label -->
+                    <!-- input -->
+                    <select name="state" class="form-control no-margin input-round" [(ngModel)]="User.state"
+                    [ngClass]="{'input-validation-error': fieldErrors.State}">
+                        <option value="">----- Please select -----</option>
+                        <option *ngFor="let state of States" [(ngValue)]="state">{{state}}</option>
+                    </select>
+                    <span *ngIf="fieldErrors.State" class="field-validation-error">{{fieldErrors.State}}</span>
+                    <!-- end input -->
+                </div>
+                <div class="form-group col-12 m-t-5" *ngIf="!pickup">
+                    <input type="checkbox" id="checkbox-default-add" class="filled-in chk-col-light-black" name="defaultAdd"
+                        [(ngModel)]="User.defaultAdd" *ngIf="!isDefaultDelAdd && !FirstAddress"/>
+                        <!--(change)="toggleExtraAttribute(Attribute)" [checked]="isExtraAttributeSelected(Attribute.id)"-->
+                    <label class="font-11 black-text margin-bottom-half font-weight-600 text-uppercase" for="checkbox-default-add" *ngIf="!isDefaultDelAdd && !FirstAddress">Set as your default delivery address</label>
+                    <label class="font-11 gray-text m-t-5 no-m-b font-weight-600 text-uppercase" *ngIf="isDefaultDelAdd">This is your default delivery address</label>
+                    <label class="font-11 gray-text m-t-5 no-m-b font-weight-600 text-uppercase" *ngIf="FirstAddress && !editMode">This address will be used as your default delivery address</label>
+                </div>
+            </form>
+        </div>
+      </div>
+    </div>
+  </div>

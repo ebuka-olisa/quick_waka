@@ -1,0 +1,22 @@
+<div class="product-added-modal">
+    <div class="modal-header no-border-bottom no-p-b">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="close()">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body no-p-t">
+        <div class="row">
+            <div class="col-12 text-center">
+                <i class="fa fa-check-circle success-icon text-green"></i>
+                <p class="black-text letter-spacing-2 font-weight-600 text-uppercase font-15 m-t-5 no-m-b" *ngIf="!FromOrder">Item was successfully added to cart</p>
+                <p class="black-text letter-spacing-2 font-weight-600 text-uppercase font-15 m-t-5 no-m-b" *ngIf="FromOrder">Order was successfully added to cart</p>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer bg-gray no-border-top">
+        <div class="col-12 text-center">
+            <button class="btn btn-gray btn-round btn-medium button" (click)="close()">Continue Browsing</button>
+            <button class="btn btn-black btn-round btn-medium button m-l-10" routerLink="/cart">View Cart</button>
+        </div>
+    </div>
+</div>

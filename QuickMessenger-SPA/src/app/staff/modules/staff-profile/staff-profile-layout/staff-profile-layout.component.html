@@ -1,0 +1,73 @@
+<!-- Row -->
+<div class="row">
+    <!-- Column -->
+    <div class="col-lg-4 col-xlg-3 col-md-5">
+        <div class="card">
+            <div class="card-body">
+                <div class="m-t-15 centered">
+                    <div class="dropzone centered profile-pic no-border">
+                        <div class="dz-preview dz-complete dz-image-preview">  
+                            <div class="dz-image">
+                                <img *ngIf="User.photoUrl" [src]="User.photoUrl">
+                                <img *ngIf="!User.photoUrl" src="assets/images/unknown.jpg">
+                                <!--<div *ngIf="!User.photoUrl" class="no-image"></div>-->
+                            </div>
+                        </div>
+                    </div>
+                    <h4 class="card-title m-t-10 text-center">{{User.firstName}} {{User.lastName}}</h4>
+                    <h6 class="card-subtitle m-b-0 text-center">{{User.role == 'SuperAdmin' ? 'Super Administrator' : User.role}}</h6>
+                </div>
+            </div>
+            <div>
+                <hr class="no-m-t m-b-5">
+            </div>
+            <div class="card-body">
+                <small class="text-muted">Email address </small>
+                <h6>{{User.email}}</h6>
+
+                <small class="text-muted p-t-15 display-block">Phone</small>
+                <h6>{{User.phone}}</h6>
+            </div>
+        </div>
+    </div>
+    <!-- Column -->
+    <!-- Column -->
+    <div class="col-lg-8 col-xlg-9 col-md-7">
+        <div class="card">
+            <!-- Nav tabs -->
+            <ul class="nav nav-tabs profile-tab" role="tablist">
+                <li class="nav-item"> <a class="nav-link" [ngClass]="{'active': ActiveView == 'basic'}" data-toggle="tab" routerLink="/qm-staff/profile" role="tab">Profile</a> </li>
+                <li class="nav-item"> <a class="nav-link" [ngClass]="{'active': ActiveView == 'contact'}" data-toggle="tab" routerLink="/qm-staff/profile/contact" role="tab">Contact</a> </li>
+                <li class="nav-item"> <a class="nav-link" [ngClass]="{'active': ActiveView == 'change_password'}" data-toggle="tab" routerLink="/qm-staff/profile/change_password" role="tab">Change Password</a> </li>
+            </ul>
+
+            <!-- Tab panes -->
+            <div class="tab-content" style="position:relative">
+                <!--<div class="inner-preloader preloader" *ngIf="loadingNestedView">
+                    <svg class="circular" viewBox="25 25 50 50">
+                        <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10"></circle>
+                    </svg>
+                </div>-->
+                <router-outlet (activate)="onActivate($event)"></router-outlet>
+            </div>
+        </div>
+    </div>
+    <!-- Column -->
+</div>
+
+<script type="text/ng-template" id="imagePopoverTemplate.html">
+    <div class="work-share">
+        <div class="width-100 m-b-5 border-bottom-very-light p-t-5 p-b-5">
+            <a href="#" class="display-block overflow-hidden" onclick="document.getElementById('photo-upload').click(); return false">
+                <i class="fa fa-upload col-md-1 col-sm-1 col-xs-1 no-p-l font-16 gray-text"></i>
+                <span class="gray-text line-height-18 col-md-10 col-sm-10 no-p-r">Upload Picture</span>
+            </a>
+        </div>
+        <div class="width-100">
+            <a href="#" class="display-block overflow-hidden" (click)="removePicture()">
+                <i class="fa fa-times col-md-1 col-sm-1 col-xs-1 no-p-l font-16 red-text"></i>
+                <span class="red-text line-height-18 col-md-10 col-sm-10 no-p-r">Remove Picture</span>
+            </a>
+        </div>
+    </div>
+</script>

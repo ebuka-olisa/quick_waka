@@ -1,0 +1,246 @@
+<!-- search section -->
+<section class="bg-gray content-top-margin p-t-10 p-b-10 sm-padding-two">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 center-col">
+                <form (submit)="globalSearch()" action="#">
+                    <div class="display-flex">
+                        <div class="display-flex flex-grow-100 special-search input-round bg-white">
+                            <select class="width-auto no-m-b bg-white" name="section" [(ngModel)]="Search.section">
+                                <option value="products">Product</option>
+                                <option value="vendors">Vendor</option>
+                            </select>
+                            <input type="text" id="textbox" name="name" class="flex-grow-100" placeholder="Search products and vendors" [(ngModel)]="Search.searchTerm">
+                        </div>
+                        <button class="btn btn-orange btn-small btn-round font-12 margin-left-one no-margin-bottom no-margin-top no-margin-right" type="submit">Search</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- end search section -->
+
+<!-- head section -->
+<section class="page-title page-title-style2">
+  <div class="container sm-container-fluid">
+      <div class="row">
+          <div class="col-md-12 col-sm-12 breadcrumb text-uppercase margin-three no-margin-top wow fadeIn">
+              <!-- breadcrumb -->
+              <ul>
+                  <li><a class="black-text" routerLink="/">Home</a></li>
+                  <li class="gray-text">Search results for {{searchTerm}}</li>
+              </ul>
+              <!-- end breadcrumb -->
+          </div>
+          <div class="col-md-12 col-sm-12 wow fadeIn">
+              <!-- page title tagline -->
+              <span class="text-uppercase black-text">Search results for:</span>
+              <!-- end title tagline -->
+              <!-- page title -->
+              <h1 class="black-text">"{{searchTerm}}"</h1>
+              <!-- end page title -->
+          </div>
+      </div>
+  </div>
+</section>
+<!-- end head section -->
+
+<!-- content section -->
+<section class="no-padding">
+  <div class="row no-margin-lr">
+    <tabset class="search-tabs" #searchTab>
+      <tab heading="Products" id="product_tab" (selectTab)="changeTab($event)" [active]="CurrentSection === 'products'">
+
+        <!-- filter section -->
+        <section class="bg-gray no-padding" id="product-filter">
+          <div class="container md-container-fluid">
+              <div class="row">
+                  <!-- Category -->
+                  <div class="col-md-3 col-sm-4" dropdown #dropdown2="bs-dropdown">
+                      <div class="icon-placeholder-region big-input bg-gray display-flex flex-grow-100 filter-item" 
+                          dropdownToggle data-toggle="collapse" aria-controls="dropdown-filter-category" id="button-filter-category"
+                          [ngClass]="{'selected-filter-item': Filter.category}">
+                          <label class="flex-grow-100 font-14 no-margin-bottom">Category</label>
+                          <i class="fa fa-chevron-down margin-top-half"></i>
+                      </div>
+                      <div class="collapse dropdown-menu filter-options-list p-t-5" *dropdownMenu id="dropdown-filter-category" aria-labelledby="button-filter-category">
+                          <div class="form-check no-p-l">
+                              <label class="custom-control custom-selector top-level p-l-15 no-m-b selected" *ngIf="topLevel">
+                                  All Categories
+                              </label>
+                              <label class="custom-control custom-selector p-l-15 no-m-b no-m-l font-weight selected" 
+                                    *ngIf="!topLevel && Category" (click)="goToParentCategory(dropdown2)">
+                                    <i class="fa fa-chevron-left m-r-5 no-m-l black-text"></i>{{Category.name}}
+                                </label>
+                              <label class="custom-control custom-selector p-l-15 no-m-b font-14" *ngFor="let Cat of Categories" 
+                              (click)="filter('category', Cat.id, dropdown2)">
+                                  {{Cat.name}}
+                              </label>
+                          </div>
+                      </div>
+                  </div>
+
+                  <!-- Sort -->
+                  <div class="col-md-3 col-sm-4" dropdown #dropdown="bs-dropdown">
+                      <div class="icon-placeholder-region big-input bg-gray display-flex flex-grow-100 filter-item" 
+                          dropdownToggle data-toggle="collapse" aria-controls="dropdown-filter-sort" id="button-filter-sort"
+                          [ngClass]="{'selected-filter-item': Filter.sort}">
+                          <label class="flex-grow-100 font-14 no-margin-bottom">Sort</label>
+                          <i class="fa fa-chevron-down margin-top-half"></i>
+                      </div>
+                      <div class="collapse dropdown-menu filter-options-list p-t-5" *dropdownMenu id="dropdown-filter-sort" aria-labelledby="button-filter-sort">
+                          <div class="form-check no-p-l">
+                              <label class="custom-control custom-radio p-l-15 no-m-b">
+                                  <input name="sort" type="radio" class="custom-control-input" value="" [(ngModel)]="Filter.sort" (click)="filter('sort', '', dropdown)" />
+                                  <span class="custom-control-indicator"></span>
+                                  <span class="custom-control-description">Default Sort</span>
+                              </label>
+                              <label class="custom-control custom-radio p-l-15 no-m-b">
+                                  <input name="sort" type="radio" class="custom-control-input" value="pricedesc" [(ngModel)]="Filter.sort" (click)="filter('sort','pricedesc', dropdown)" />
+                                  <span class="custom-control-indicator"></span>
+                                  <span class="custom-control-description">Price high to low</span>
+                              </label>
+                              <label class="custom-control custom-radio p-l-15 no-m-b">
+                                  <input name="sort" type="radio" class="custom-control-input" value="priceasc" [(ngModel)]="Filter.sort" (click)="filter('sort', 'priceasc', dropdown)" />
+                                  <span class="custom-control-indicator"></span>
+                                  <span class="custom-control-description">Price low to high</span>
+                              </label>
+                          </div>
+                      </div>
+                  </div>
+
+                  <!-- Price -->
+                  <div class="col-md-3 col-sm-4" dropdown #dropdown3="bs-dropdown">
+                      <div class="icon-placeholder-region big-input bg-gray display-flex flex-grow-100 filter-item" 
+                          dropdownToggle data-toggle="collapse" aria-controls="dropdown-filter-sort" id="button-filter-price"
+                          [ngClass]="{'selected-filter-item': Filter.minPrice || Filter.maxPrice}">
+                          <label class="flex-grow-100 font-14 no-margin-bottom">Price</label>
+                          <i class="fa fa-chevron-down margin-top-half"></i>
+                      </div>
+                      <div class="collapse dropdown-menu filter-options-list no-padding" *dropdownMenu id="dropdown-filter-price" aria-labelledby="button-filter-price">
+                          <div class="price-slider">
+                              <div class="bg-gray col-12 text-right p-t-10 p-b-10">
+                                  <button class="btn btn-round btn-black btn-small no-margin text-uppercase" (click)="resetPriceRange()">Clear</button>
+                              </div>
+                              <div class="col-12 p-t-10 p-b-5">
+                                  <label class="price-label">₦{{minValue | number}}</label>
+                                  <label class="price-label f-right">₦{{maxValue | number}}</label>
+                              </div>
+                              <div class="col-12 p-b-10">
+                                  <ng5-slider [(value)]="minValue" [(highValue)]="maxValue" [options]="options" (userChangeEnd)="priceChange($event)"></ng5-slider>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+        </section>
+        <!-- end filter section -->
+
+        <!-- product list-->
+        <section class="no-padding-top bg-white" *ngIf="CurrentSection == 'products'">
+            <div *ngIf="Products && Products.length > 0" class="container md-container-fluid" infiniteScroll [infiniteScrollDistance]="2" [infiniteScrollThrottle]="50" (scrolled)="onScroll()">
+                <div class="row">
+                    <p class="col-12 text-center margin-one sm-margin-two">{{pagination.totalCount}} item{{pagination.totalCount > 1 ? 's': ''}} found</p>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12 grid-gallery overflow-hidden" >
+                        <ul class="grid masonry-items product-items">
+                            <!-- work item -->
+                            <li *ngFor="let Product of Products">
+                                <figure (click)="showProduct($event, Product)">
+                                    <div class="gallery-img">
+                                        <!--<a data-toggle="modal" routerLink="item"><img [src]="Product.pictureUrl" alt=""></a>-->
+                                        <img [src]="Product.pictureUrl" alt="">
+                                        <div class="button-holder p-t-10 p-b-5">
+                                            <button type="button" class="btn btn-orange btn-small btn-round width-100 no-margin" *ngIf="!Product.outOfStock" (click)="addToCart(Product);">Add to Cart</button>
+                                            <button type="button" class="btn text-error btn-small btn-round width-100 no-margin" *ngIf="Product.outOfStock">Currently unavailable</button>
+                                        </div>
+                                    </div>                     
+                                    <figcaption>
+                                        <!--<a routerLink="item" class="text-center display-block outer-link"></a>-->
+                                        <p class="black-text text-left font-weight-500 letter-spacing-1 font-14">{{Product.name}}</p>
+                                        <p class="black-text text-left font-weight-700 letter-spacing-2 font-15">
+                                            <!--<span class="discount">₦<span class="amount">17,000</span></span>-->
+                                            ₦<span class="amount">{{Product.price | number}}</span>
+                                        </p>
+                                        <p class="letter-spacing-1 text-left text-transform-unset border-top-very-light p-t-5 gray-text inner-link-holder" *ngIf="Product.vendor">Sold by <a class="orange-text margin-left-one" routerLink="/vendors/{{Product.vendor.id}}" (click)="$event.stopPropagation();" target="_blank">{{Product.vendor.name}}</a></p>    
+                                        <p class="letter-spacing-1 text-left text-transform-unset border-top-very-light p-t-5 gray-text inner-link-holder" *ngIf="!Product.vendor">Sold in the market</p>    
+                                            <!--<button type="button" class="btn btn-orange btn-very-small btn-round margin-three" href="#">Add to Cart</button>-->
+                                    </figcaption>
+                                    <!--<div class="discount-marker">-12%</div>-->
+                                </figure>
+                            </li>
+                            <!-- end work item -->            
+                        </ul>
+                    </div>
+                </div>
+
+
+                <div class="bottom-preloader" [hidden]="!backgroundLoadingItems">
+                    <svg class="circular" viewBox="25 25 50 50">
+                        <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10"></circle>
+                    </svg>
+                </div>
+            </div>
+
+            <div *ngIf="!Products || Products.length == 0" class="container text-center padding-four">
+                <p class="font-weight-700 font-18 text-uppercase letter-spacing-2 black-text m-b-10">No results match your search</p>
+                <p *ngIf="!filterActive" class="font-14 letter-spacing-1 gray-text">Check your spelling or try a different search</p>
+                <p class="font-14 letter-spacing-1 gray-text" *ngIf="filterActive">Try adjusting the filters a little bit!</p>
+            </div>
+        </section>
+        <!-- end product list -->
+      </tab>
+
+      <tab heading="Vendors" id="vendor_tab" (selectTab)="changeTab($event)" [active]="CurrentSection === 'vendors'">
+        <!-- vendor list-->
+        <section class="padding-four bg-white" *ngIf="CurrentSection == 'vendors'">
+            <div *ngIf="Vendors && Vendors.length > 0" class="container sm-container-fluid" infiniteScroll [infiniteScrollDistance]="2" [infiniteScrollThrottle]="50" (scrolled)="onVendorScroll()">
+                <div class="row vendor-list">
+                    <div class="col-12 margin-three no-margin-top" *ngFor="let VendorGroup of VendorGroups">
+                        <h2 class="margin-one no-margin-top">{{VendorGroup.title}}</h2>
+                        <div class="row no-margin-left no-margin-top margin-two">
+                            <a class="col-lg-3 col-md-4 col-sm-4 no-padding-left vendor-list-item" *ngFor="let Vendor of VendorGroup.vendors" routerLink="/vendors/{{Vendor.id}}">
+                                <div class="display-inline-block f-left margin-right-four">
+                                    <img *ngIf="Vendor.imageUrl" [src]="Vendor.imageUrl">
+                                    <div *ngIf="!Vendor.imageUrl" class="vendor-logo-replacement">{{Vendor.name.substring(0, 1)}}</div>
+                                </div>
+                                <div>
+                                    <p class="letter-spacing-1 truncate no-m-b font-15">{{Vendor.name}}</p>
+                                    <p class="letter-spacing-1 truncate no-m-b gray-text">{{Vendor.address}}</p>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+        
+                <div class="bottom-preloader margin-three" [hidden]="!backgroundLoadingItems">
+                    <svg class="circular" viewBox="25 25 50 50">
+                        <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10"></circle>
+                    </svg>
+                </div>
+            </div>
+
+            <div *ngIf="!Vendors || Vendors.length == 0" class="container text-center padding-four">
+                <p class="font-weight-700 font-18 text-uppercase letter-spacing-2 black-text m-b-10">No results match your search</p>
+                <p class="font-14 letter-spacing-1 gray-text">Check your spelling or try a different search</p>
+            </div>
+        </section>
+        <!-- end vendor list -->
+      </tab>
+    </tabset>
+  </div>
+</section>
+<!-- end content section -->
+
+
+
+<!-- Preloader -->
+<div class="preloader opaque-background" [hidden]="!reloadingItems">
+    <svg class="circular" viewBox="25 25 50 50">
+        <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10"></circle>
+    </svg>
+</div>

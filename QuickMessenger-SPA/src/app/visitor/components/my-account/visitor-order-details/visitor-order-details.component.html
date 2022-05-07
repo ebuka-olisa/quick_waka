@@ -1,0 +1,109 @@
+<div class="order-details col-12 no-p-lr">
+    <h3 class="border-bottom">
+        <a routerLink="/my-account/orders"><i class="fa fa-chevron-left m-r-5"></i></a>
+        Order Details
+    </h3>
+
+    <div class="col-12 no-p-lr m-t-20">
+        <div class="order-details-summary col-12 row no-margin no-p-lr border-bottom-light">
+            <div class="col-lg-4 col-md-4 col-sm-6">
+                <p class="text-uppercase font-weight-700 letter-spacing-1 text-grey no-m-b">Order No:</p>
+                <p class="font-weight-400 letter-spacing-1 black-text">{{Order.trackingId}}</p>
+
+                <p class="text-uppercase font-weight-700 letter-spacing-1 text-grey no-m-b">Cart No:</p>
+                <p class="font-weight-400 letter-spacing-1 black-text">{{Order.cartTrackingId}}</p>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-6">
+                <p class="text-uppercase font-weight-700 letter-spacing-1 text-grey no-m-b">Order Date:</p>
+                <p class="font-weight-400 letter-spacing-1 black-text">{{ Order.date | date: 'MMMM dd, yyyy'  }}</p>
+
+                <p class="text-uppercase font-weight-700 letter-spacing-1 text-grey no-m-b">Order Type:</p>
+                <p class="font-weight-400 letter-spacing-1 black-text">{{Order.service?.name}}</p>
+            </div>
+            <div class="col-lg-4 col-md-4 col-12">
+                <div class="col-sm-6 col-md-12 no-p-lr">
+                    <p class="text-uppercase font-weight-700 letter-spacing-1 text-grey no-m-b">Order Status:</p>
+                    <p class="font-weight-600 letter-spacing-1 black-text order-state" [ngClass]="{'pending': Order.state == 'Pending', 'ontheway': Order.state == 'On The Way', 'delivered': Order.state == 'Delivered'}">
+                        <span class="dot" [ngClass]="{'pending': Order.state == 'Pending', 'ontheway': Order.state == 'On The Way', 'delivered': Order.state == 'Delivered'}"></span>{{Order.state == 'On The Way' ? 'Enroute' : Order.state}}
+                    </p>
+                </div>
+
+                <div class="col-sm-6 col-md-12 no-p-lr">
+                    <p class="text-uppercase font-weight-700 letter-spacing-1 text-grey no-m-b" *ngIf="Order.state == 'Delivered'">Delivery Date:</p>
+                    <p class="font-weight-400 letter-spacing-1 black-text" *ngIf="Order.state == 'Delivered'">{{ Order.timeDelivered | date: 'MMMM dd, yyyy'  }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 row no-margin no-p-lr border-bottom-light p-t-20">
+            <div class="order-details-delivery col-lg-6 col-md-4">
+                <p class="text-uppercase font-weight-700 letter-spacing-1 text-grey m-b-5" *ngIf="Order.type == 'pickup'">Pickup Address</p>
+                <p class="letter-spacing-1 black-text" *ngIf="Order.type == 'pickup'">
+                    {{Order.pickupItems[0].address?.firstName}} {{Order.pickupItems[0].address?.lastName}}<br/>
+                    {{Order.pickupItems[0].address?.street}}, {{Order.pickupItems[0].address?.city}}, {{Order.pickupItems[0].address?.state}} <br/>
+                    {{Order.pickupItems[0].address?.phone}}
+                </p>
+
+                <p class="text-uppercase font-weight-700 letter-spacing-1 text-grey m-b-5" *ngIf="Order.type == 'pickup'">Pickup Date</p>
+                <p class="letter-spacing-1 black-text" *ngIf="Order.type == 'pickup'">
+                    {{ Order.pickupTime | date: 'MMMM dd, yyyy yyyy h:mm a' }}
+                </p>
+                
+                <p class="text-uppercase font-weight-700 letter-spacing-1 text-grey m-b-5">Delivery Address</p>
+                <p class="letter-spacing-1 black-text">
+                    {{Order.address?.firstName}} {{Order.address?.lastName}}<br/>
+                    {{Order.address?.street}}, {{Order.address?.city}}, {{Order.address?.state}} <br/>
+                    {{Order.address?.phone}}
+                </p>
+            </div>
+            <div class="order-details-payment col-lg-6 col-md-4">
+                <p class="text-uppercase font-weight-700 letter-spacing-1 text-grey m-b-5">Payment Details</p>
+                <table class="table cart-total">
+                    <tbody>
+                        <tr *ngIf="Order.type == 'purchase'">
+                            <th class="text-left no-padding-left font-weight-400 letter-spacing-1 font-13 xs-no-padding no-p-b no-p-t">Sub-total</th>
+                            <td class="text-right no-padding-right font-weight-400 black-text xs-no-padding no-p-b no-p-t">₦{{Order.cost | number}}</td>
+                        </tr>
+                        <tr>
+                            <th class="text-left no-padding-left font-weight-400 letter-spacing-1 font-13 xs-no-padding no-p-b no-p-t">Shipping</th>
+                            <td class="text-right no-padding-right font-weight-400 black-text xs-no-padding no-p-b no-p-t">₦{{Order.deliveryCharge | number}}</td>
+                        </tr>
+                        <tr>
+                            <td class="no-padding" colspan="2">
+                                <hr>
+                            </td>
+                        </tr>
+                        <tr class="total">
+                            <th class="text-left no-padding-left font-weight-600 font-14 xs-no-padding no-p-t no-p-b">Total</th>
+                            <td class="text-right no-padding-right font-weight-600 black-text font-14 no-letter-spacing xs-no-padding no-p-t no-p-b">₦{{Order.cost + Order.deliveryCharge | number}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="order-details-items col-12 row no-margin no-p-lr">
+            <p class="col-12 text-uppercase font-weight-700 letter-spacing-1 text-grey m-b-5">Items</p>
+            <div class="col-lg-4 col-md-4 col-sm-6 item" *ngFor="let ProductOrder of Order.productOrders">
+                <div class="product-thumbnail">
+                    <img [src]="ProductOrder.product.photos[0].url" alt="" >
+                </div>
+                <div class="product-info text-left p-l-15">
+                    <p class="product-name black-text no-m-b">{{ProductOrder.product.name}}</p>
+                    <p class="font-weight-600 no-m-b black-text">₦{{ProductOrder.productPrice | number}}</p>
+                    <p class="mid-gray-text no-m-b">Qty: <span class="font-weight-600 black-text">{{ProductOrder.quantity}}</span></p>
+                    <p class="mid-gray-text no-m-b font-12" *ngIf="ProductOrder.product.vendor">Sold by <a class="orange-text">{{ProductOrder.product.vendor.name}}</a></p>
+                </div>
+            </div>
+            <div class="col-12 item" *ngFor="let PickupItem of Order.pickupItems">
+                <div class="product-thumbnail" *ngIf="PickupItem.photos && PickupItem.photos.length > 0">
+                    <img [src]="allowImageURL(PickupItem.photos[0].url)" alt="" >
+                </div>
+                <div class="product-info text-left" [ngClass]="{'p-l-15': PickupItem.photos && PickupItem.photos.length > 0}">
+                    <p class="product-name mid-gray-text no-m-b">{{PickupItem.name}}</p>
+                    <p class="mid-gray-text no-m-b">Pieces: <span class="font-weight-600 black-text">{{PickupItem.quantity}}</span></p>
+                    <p class="mid-gray-text no-m-b">Size: <span class="font-weight-600 black-text">{{PickupItem.size}}</span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

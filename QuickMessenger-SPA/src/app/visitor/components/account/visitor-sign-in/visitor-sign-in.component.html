@@ -1,0 +1,66 @@
+<section>
+    <div class="container">
+        <div class="row col-md-9 col-lg-6 center-col">
+            <div class="col-md-12 text-center wow fadeInUp">
+                <h3 class="section-title padding-three padding-bottom-one font-28">Sign In</h3>
+                <p class="black-text">New to QuickWaka? <a class="orange-text text-decoration-underline" routerLink="/account/create" [queryParams]= "queryParams">Create an Account</a></p>
+            </div>
+
+            <div class="col-md-12 m-b-20" *ngIf="fieldErrors.GeneralError">
+                <div class="col-md-12 padding-two bg-error">
+                    <i class="fa fa-exclamation-circle display-table-cell text-error p-r-10 font-14"></i>
+                    <span class="field-validation-error display-table-cell font-14">{{fieldErrors.GeneralError}}</span>
+                </div>
+            </div>          
+          
+            <div class="col-md-12">
+                <form (ngSubmit)="signin()" name="signInForm">
+                    <div class="form-group">
+                        <!-- label -->
+                        <label for="email" class="font-14 black-text margin-bottom-half">Email Address</label>
+                        <!-- end label -->
+                        <!-- input -->
+                        <input type="email" id="email" name="email" class="input-round no-margin" [(ngModel)]="User.username" 
+                            [ngClass]="{'input-validation-error': fieldErrors.Username}">
+                        <span *ngIf="fieldErrors.Username" class="field-validation-error ng-hide">{{fieldErrors.Username}}</span>
+                        <!-- end input -->
+                    </div>
+                    <div class="form-group m-b-25">
+                        <!-- label -->
+                        <label for="password" class="font-14 black-text margin-bottom-half">Password</label>
+                        <span class="f-right orange-text font-weight-300 cursor-pointer" (click)="togglePasswordVisibitiy()">{{PasswordSettings.displayText}}</span>
+                        <!-- end label -->
+                        <!-- input -->
+                        <div class="link-placeholder-input input-round big-input bg-white display-flex" 
+                            [ngClass]="{'input-validation-error': fieldErrors.Password}">
+                            <input type="{{PasswordSettings.displayType}}" id="password" name="password" class="flex-grow-100" [(ngModel)]="User.password">
+                            <a class="gray-text" routerLink="/account/password/forgot" [queryParams]= "queryParams">Forgot Password?</a>
+                        </div>
+                        <span *ngIf="fieldErrors.Password" class="field-validation-error ng-hide">{{fieldErrors.Password}}</span>
+                        <!-- end input -->
+                    </div>
+                    <div class="form-group">
+                        <button class="btn btn-orange btn-medium btn-round no-margin width-100 font-weight-700" type="submit" 
+                        [disabled]="processing">
+                            SIGN IN
+                            <span *ngIf="processing" class="loader loader-small display-inline-block pull-right no-animate"></span>
+                        </button>
+                    </div>
+                    <div class="hr-label"><span class="hr-label__text text-uppercase font-weight-600 black-text">or</span></div>
+                    <div class="col-md-9 col-sm-10 col-12 center-col">
+                        <div class="col-md-6 col-sm-6 col-6 no-padding-left display-inline-block">
+                            <a class="login-btn login-btn-google cursor-pointer" (click)="signInWithGoogle()">Google
+                                <span *ngIf="processingGoogle" class="loader loader-small display-inline-block pull-right no-animate"></span>
+                            </a>
+                        </div>
+                        <div class="col-md-6 col-sm-6 col-6 no-padding-right display-inline-block">
+                            <a class="login-btn login-btn-facebook cursor-pointer" (click)="signInWithFB()">Facebook
+                                <span *ngIf="processingFacebook" class="loader loader-small display-inline-block pull-right no-animate"></span>
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>

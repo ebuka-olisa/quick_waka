@@ -1,0 +1,340 @@
+<!-- head section -->
+<section class="content-top-margin page-title page-title-small border-top-light bg-white">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-9 col-md-12 wow fadeInUp" data-wow-duration="300ms">
+                <!-- page title -->
+                <h1 class="black-text">{{Service.name}}</h1>
+                <!-- end page title -->
+            </div>
+            <div class="col-lg-3 col-md-12 breadcrumb text-uppercase wow fadeInUp sm-display-none text-right" data-wow-duration="600ms">
+                <!-- breadcrumb -->
+                <ul>
+                    <li><a routerLink="/">Home</a></li>
+                    <li class="gray-text font-weight-300">{{Service.name}}</li>
+                </ul>
+                <!-- end breadcrumb -->
+            </div>
+        </div>
+    </div>
+</section>
+<!-- end head section -->
+
+
+<!-- content section -->
+<section class="wow fadeIn padding-two bg-gray" id="content-section">
+    <div class="container sm-container-fluid">
+        <div class="row">
+
+            <div class="service-page-container col-lg-10 col-md-12 centered">
+                <h3 class="border-bottom">New {{Service.name}}</h3>
+                
+                <!-- Choose Errand Tyoe-->
+                <div class="col-12 m-t-10 xs-no-p-lr" *ngIf="PickupAllowed && PurchaseAllowed">
+                    <!-- label -->
+                    <label for="email" class="font-14 black-text margin-bottom-half text-small font-weight-600 text-uppercase">What kind of errand do you require?</label>
+                    <!-- end label -->
+                    <!-- input -->
+                    <div class="form-check no-p-l">
+                        <label class="custom-control custom-radio p-l-15 no-m-b">
+                            <input name="IsPickup" type="radio" class="custom-control-input" value="true" [(ngModel)]="ServiceForm.isPickup" />
+                            <span class="custom-control-indicator"></span>
+                            <span class="custom-control-description black-text">Pickup</span>
+                            <span class="custom-control-description-hint gray-text">Send us to a location to put up an item for you.</span>
+                        </label>
+                        <label class="custom-control custom-radio p-l-15 no-m-b">
+                            <input name="IsPickup" type="radio" class="custom-control-input" value="false" [(ngModel)]="ServiceForm.isPickup" />
+                            <span class="custom-control-indicator"></span>
+                            <span class="custom-control-description black-text">Purchase</span>
+                            <span class="custom-control-description-hint gray-text">Buy the items on QuickWaka and have us deliver to you.</span>
+                        </label>
+                    </div>
+                    <!-- end input -->
+                </div>
+
+                <!-- Pickup Item/Address/Date -->
+                <div class="col-12 xs-no-p-lr" [ngClass]="{'m-t-30': PurchaseAllowed, 'm-t-20': !PurchaseAllowed}" *ngIf="ServiceForm.isPickup == 'true'">
+                    <!-- Pickup Item -->
+                    <div class="service-inner-section">
+                        <div class="col-12 m-b-15 no-padding">
+                            <h4 class="border-bottom-light font-weight-700 font-14 text-uppercase black-text">Pickup Item</h4>
+                        </div>
+                        <div class="col-12 row no-margin no-p-lr">
+                            <!-- Name -->
+                            <div class="form-group col-lg-6">
+                                <!-- label -->
+                                <label for="item_name" class="font-14 black-text margin-bottom-half text-small font-weight-600 text-uppercase">Name</label>
+                                <!-- end label -->
+                                <!-- input -->
+                                <input type="text" id="item_name" name="item_name" class="input-round no-margin" [(ngModel)]="ServiceForm.pickupItem.name"
+                                [ngClass]="{'input-validation-error': fieldErrors.ItemName}">
+                                <span *ngIf="fieldErrors.ItemName" class="field-validation-error">{{fieldErrors.ItemName}}</span>
+                                <!-- end input -->
+                            </div>
+                            <!-- Value -->
+                            <div class="form-group col-lg-6">
+                                <label for="item_value" class="font-14 black-text margin-bottom-half text-small font-weight-600 text-uppercase">
+                                    Value 
+                                    <span class="text-grey">(₦)</span>
+                                </label>
+                                <input type="number" id="item_value" name="item_value" class="input-round no-margin" min="0"
+                                [(ngModel)]="ServiceForm.pickupItem.value" [ngClass]="{'input-validation-error': fieldErrors.ItemValue}">
+                                <span *ngIf="!fieldErrors.ItemValue" class="font-11 gray-text display-block field-validation-error">Let us know the estimated value/worth of the package you want delivered</span>
+                                <span *ngIf="fieldErrors.ItemValue" class="field-validation-error">{{fieldErrors.ItemValue}}</span>
+                            </div>
+                            <!-- Pieces -->
+                            <div class="form-group col-lg-6">
+                                <label for="item_count" class="font-14 black-text margin-bottom-half text-small font-weight-600 text-uppercase">
+                                    Number of Pieces 
+                                </label>
+                                <input type="number" id="item_count" name="item_count" class="input-round no-margin" min="0"
+                                [(ngModel)]="ServiceForm.pickupItem.count" [ngClass]="{'input-validation-error': fieldErrors.ItemValue}">
+                                <span *ngIf="fieldErrors.ItemCount" class="field-validation-error">{{fieldErrors.ItemCount}}</span>
+                            </div>
+                            <!-- Fragile -->
+                            <div class="form-group col-lg-6">
+                                <!-- label -->
+                                <label for="item_nature" class="font-14 black-text margin-bottom-half text-small font-weight-600 text-uppercase">Fragile</label>
+                                <!-- end label -->
+                                <!-- input -->
+                                <div class="form-check no-p-l">
+                                    <label class="custom-control custom-radio p-l-15 no-m-b">
+                                        <input name="IsFragile" type="radio" class="custom-control-input" value="true" [(ngModel)]="ServiceForm.pickupItem.isFragile" />
+                                        <span class="custom-control-indicator"></span>
+                                        <span class="custom-control-description gray-text">Yes</span>
+                                    </label>
+                                    <label class="custom-control custom-radio p-l-15 no-m-b">
+                                        <input name="IsFragile" type="radio" class="custom-control-input" value="false" [(ngModel)]="ServiceForm.pickupItem.isFragile" />
+                                        <span class="custom-control-indicator"></span>
+                                        <span class="custom-control-description gray-text">No</span>
+                                    </label>
+                                </div>
+                                <span *ngIf="fieldErrors.ItemNature" class="field-validation-error">{{fieldErrors.ItemNature}}</span>
+                                <!-- end input -->
+                            </div>
+                            <!-- Size -->
+                            <div class="form-group col-lg-8 col-12">
+                                <label for="item_size" class="font-14 black-text margin-bottom-half text-small font-weight-600 text-uppercase">Size</label>
+                                <div class="form-check no-p-l row no-margin">
+                                    <label class="custom-control custom-radio p-l-15 no-m-b col-lg-3 col-md-3 col-sm-3 display-inline-block">
+                                        <img class="custom-control-image" src="assets/images/bikes/bike-small-item.png">
+                                        <input name="item_size" type="radio" class="custom-control-input" value="small" [(ngModel)]="ServiceForm.pickupItem.size" />
+                                        <span class="custom-control-indicator"></span>
+                                        <span class="custom-control-description gray-text">Small</span>
+                                    </label>
+                                    <label class="custom-control custom-radio p-l-15 no-m-b col-lg-3 col-md-3 col-sm-3 display-inline-block">
+                                        <img class="custom-control-image" src="assets/images/bikes/bike-medium-item.png">
+                                        <input name="item_size" type="radio" class="custom-control-input" value="medium" [(ngModel)]="ServiceForm.pickupItem.size" />
+                                        <span class="custom-control-indicator"></span>
+                                        <span class="custom-control-description gray-text">Medium</span>
+                                    </label>
+                                    <label class="custom-control custom-radio p-l-15 no-m-b col-lg-3 col-md-3 col-sm-3 display-inline-block">
+                                        <img class="custom-control-image" src="assets/images/bikes/bike-large-item.png">
+                                        <input name="item_size" type="radio" class="custom-control-input" value="large" [(ngModel)]="ServiceForm.pickupItem.size" />
+                                        <span class="custom-control-indicator"></span>
+                                        <span class="custom-control-description gray-text">Large</span>
+                                    </label>
+                                    <label class="custom-control custom-radio p-l-15 no-m-b col-lg-3 col-md-3 col-sm-3 display-inline-block">
+                                        <img class="custom-control-image" src="assets/images/bikes/bike-extra-large-item.png">
+                                        <input name="item_size" type="radio" class="custom-control-input" value="extra_large" [(ngModel)]="ServiceForm.pickupItem.size" />
+                                        <span class="custom-control-indicator"></span>
+                                        <span class="custom-control-description gray-text">Extra Large</span>
+                                    </label>
+                                </div>
+                                <span *ngIf="fieldErrors.ItemSize" class="field-validation-error ng-hide">{{fieldErrors.ItemSize}}</span>
+                                <!-- end input -->
+                            </div>
+                            <!-- Description -->
+                            <div class="form-group col-lg-12">
+                                <!-- label -->
+                                <label for="item_description" class="font-14 black-text margin-bottom-half text-small font-weight-600 text-uppercase">Description</label>
+                                <!-- end label -->
+                                <!-- input -->
+                                <textarea id="item_description" name="item_description" class="input-round no-margin" [(ngModel)]="ServiceForm.pickupItem.description"
+                                [ngClass]="{'input-validation-error': fieldErrors.ItemDescription}"></textarea>
+                                <span *ngIf="fieldErrors.ItemDescription" class="field-validation-error">{{fieldErrors.ItemDescription}}</span>
+                                <!-- end input -->
+                            </div>
+                            <!-- Pictures -->
+                            <div class="form-group col-lg-12">
+                                <!-- label -->
+                                <label class="font-14 black-text margin-bottom-half text-small font-weight-600 text-uppercase">
+                                    Pictures 
+                                    <span class="font-11 opacity-3 text-capitalize">(Optional)</span>
+                                </label>
+                                <!-- end label -->
+                                <!-- input -->
+                                <app-multiple-pics [config]="itemPicturesConfig" (picturesUpdated)="setPictures($event)" (pictureDeleted)="deletePicture($event)" ></app-multiple-pics>
+                                <span *ngIf="!fieldErrors.ItemPictures" class="font-11 gray-text display-block field-validation-error">NOTE: You cannot upload more than 3 pictures</span>
+                                <span *ngIf="fieldErrors.ItemPictures" class="field-validation-error">{{fieldErrors.ItemPictures}}</span>
+                                <!-- end input -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pickup Address -->
+                    <div class="service-inner-section m-t-30" *ngIf="ServiceForm.isPickup == 'true'">
+                        <div class="col-12 m-b-15 no-padding">
+                            <h4 class="border-bottom-light font-weight-700 font-14 text-uppercase black-text">
+                                Pickup Address
+                                <button class="btn-gray btn btn-round btn-small no-margin pull-right" (click)="selectPickupAddress()">{{ServiceForm.pickupAddress ? 'Change': 'Select'}}</button>
+                                <button class="btn-red btn btn-round btn-small no-m-t no-m-b pull-right m-r-5" (click)="removePickupAddress()" *ngIf="ServiceForm.pickupAddress">Remove</button>
+                            </h4>
+                        </div>
+
+                        <div class="col-12 row no-p-lr no-margin">
+                            <div class="form-group col-6 no-m-b">
+                                <p class="text-grey letter-spacing-1 no-m-b" *ngIf="!ServiceForm.pickupAddress && !fieldErrors.PickupAddress">No pickup address has been selected.</p>               
+                                <p class="letter-spacing-1 black-text no-m-b" *ngIf="ServiceForm.pickupAddress"> 
+                                    <span class="font-weight-600">{{ServiceForm.pickupAddress.firstName}} {{ServiceForm.pickupAddress.lastName}}</span><br/>
+                                    {{ServiceForm.pickupAddress.street}}, {{ServiceForm.pickupAddress.city}}, {{ServiceForm.pickupAddress.state}} <br/>
+                                    {{ServiceForm.pickupAddress.phone}} 
+                                </p>
+                                <p class="field-validation-error letter-spacing-1 no-m-b" *ngIf="fieldErrors.PickupAddress">{{fieldErrors.PickupAddress}}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pickup Date -->
+                    <div class="service-inner-section m-t-30" *ngIf="ServiceForm.isPickup == 'true'">
+                        <div class="col-12 m-b-15 no-padding">
+                            <h4 class="font-weight-700 font-14 text-uppercase black-text no-p-b">
+                                Pickup Date
+                                <button class="btn-gray btn btn-round btn-small no-margin pull-right" (click)="toggleDateTimePopup()">{{ServiceForm.pickupDate ? 'Change': 'Select'}}</button>
+                            </h4>
+                            <span class="border-bottom-light font-12 display-block no-p-t p-lr-15 p-b-10 gray-text">We pick up items between 5:00am and 11:00pm</span>
+                        </div>
+
+                        <div class="col-12 row no-p-lr no-margin">
+                            <div class="form-group col-12 no-m-b">
+                                <div class="col-12 no-p-lr">
+                                    <p class="text-grey letter-spacing-1 no-m-b" *ngIf="!ServiceForm.pickupDate && !fieldErrors.PickupDate">No pickup date has been selected.</p>
+                                    <p class="letter-spacing-1 black-text no-m-b" *ngIf="ServiceForm.pickupDate">{{ ServiceForm.pickupDate | date: 'EEEE, dd MMMM yyyy h:mm a' }}</p>
+                                    <datetime-popup [(value)]="ServiceForm.pickupTempDate" 
+                                    (valueChange)="onPickupDateValueChange($event)"
+                                    [(showPopup)]="datetimePickerConfig.showPicker" 
+                                    [showMeridian]="datetimePickerConfig.showMeridian"
+                                    [minDate]="datetimePickerConfig.minDate" 
+                                    [minuteStep]="datetimePickerConfig.minuteStep"></datetime-popup>
+                                    <p class="field-validation-error letter-spacing-1 no-m-b" *ngIf="fieldErrors.PickupDate">{{fieldErrors.PickupDate}}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Purchase Items -->
+                <div class="col-12 xs-no-p-lr" [ngClass]="{'m-t-30': PickupAllowed, 'm-t-20': !PickupAllowed}" *ngIf="ServiceForm.isPickup == 'false'">
+                    <div class="service-inner-section">
+                        <div class="col-12 no-padding purchase-section">
+                            <h4 class="border-bottom-light font-weight-700 font-14 text-uppercase black-text">
+                                Purchase List
+                                <button class="btn-gray btn btn-round btn-small no-margin pull-right" (click)="addPurchaseItems()">Add</button>
+                            </h4>
+                            <table class="table shop-cart text-center no-m-b">
+                                <thead *ngIf="ServiceForm.purchaseItems && ServiceForm.purchaseItems.length > 0">
+                                    <tr>
+                                        <th class="first"></th>
+                                        <th class="text-left text-uppercase font-weight-600 letter-spacing-2 text-small black-text">Product</th>
+                                        <th class="text-left text-uppercase font-weight-600 letter-spacing-2 text-small black-text">Price</th>
+                                        <th class="text-left text-uppercase font-weight-600 letter-spacing-2 text-small black-text">Quantity</th>
+                                        <th class="text-left text-uppercase font-weight-600 letter-spacing-2 text-small black-text">Sub-Total</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let item of ServiceForm.purchaseItems; let i = index">
+                                        <td class="product-thumbnail text-left">
+                                            <a href="javascript:void(0)" (click)="showProduct(item)"><img [src]="item.pictureUrl" alt="" ></a>
+                                        </td>
+                                        <td class="text-left product-name">
+                                            <a href="javascript:void(0)" (click)="showProduct(item)">{{item.name}}</a>
+                                            <span class="display-block font-12" *ngIf="item.vendor">Sold by <a class="orange-text" routerLink="/vendors/{{item.vendor.id}}" target='_blank'>{{item.vendor.name}}</a></span>
+                                        </td>
+                                        <td class="text-left font-weight-600">
+                                            ₦{{item.price | number}}
+                                        </td>
+                                        <td class="product-quantity">
+                                            <!--<div class="select-style med-input shop-shorting shop-shorting-cart no-border-round">
+                                                <select [(ngModel)]="item.quantity">
+                                                    <option value="1">1</option>
+                                                    <option value="2">2</option>
+                                                    <option value="3">3</option>
+                                                    <option value="4">4</option>
+                                                    <option value="5">5</option>
+                                                    <option value="6">6</option>
+                                                </select>
+                                            </div>-->
+                                            <div class="display-flex">
+                                                <button class="btn btn-gray no-margin fa fa-minus" (click)="decreaseQuantity(item)"></button>
+                                                <input type="number" name="quantity" [(ngModel)]="item.quantity" />
+                                                <button class="btn btn-gray no-margin fa fa-plus" (click)="increaseQuantity(item)"></button>
+                                            </div>
+                                        </td>
+                                        <td class="product-subtotal text-left font-weight-600">₦{{item.price * item.quantity | number}}</td>
+                                        <td class="product-remove text-center">
+                                            <a href="javascript:void(0)" (click)="removePurcahseItem(i)"><i class="fa fa-times"></i></a>
+                                        </td>
+                                    </tr>
+                                    <tr *ngIf="!ServiceForm.purchaseItems || ServiceForm.purchaseItems.length == 0">
+                                        <td colspan="5" class="p-t-20 font-14 letter-spacing-1 text-grey text-uppercase font-weight-600"  *ngIf="!fieldErrors.PurchaseItems">
+                                            No item has been added for purchase
+                                        </td>
+                                        <td colspan="5" class="p-t-20 font-14 letter-spacing-1 field-validation-error text-uppercase font-weight-600" *ngIf="fieldErrors.PurchaseItems">
+                                            {{fieldErrors.PurchaseItems}}
+                                        </td>
+                                    </tr>
+                                    <tr *ngIf="ServiceForm.purchaseItems && ServiceForm.purchaseItems.length > 0">
+                                      <td colspan="6" class="text-right font-weight-600 font-15 border-top text-uppercase letter-spacing-2 p-r-40">
+                                        Sub-Total<span class="font-weight-700 font-16 p-l-15 no-letter-spacing">₦{{purchaseTotal() | number}}</span>
+                                      </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Delivery Address -->
+                <div class="col-12 m-t-20 m-b-10 xs-no-p-lr">
+                    <div class="service-inner-section m-t-30">
+                        <div class="col-12 m-b-15 no-padding">
+                            <h4 class="border-bottom-light font-weight-700 font-14 text-uppercase black-text">
+                                Delivery Address
+                                <button class="btn-gray btn btn-round btn-small no-margin pull-right" (click)="selectDeliveryAddress()">{{ServiceForm.deliveryAddress ? 'Change': 'Select'}}</button>
+                                <button class="btn-red btn btn-round btn-small no-m-t no-m-b pull-right m-r-5" (click)="removeDeliveryAddress()" *ngIf="ServiceForm.deliveryAddress">Remove</button>
+                            </h4>
+                        </div>
+
+                        <div class="col-12 row no-p-lr no-margin">
+                            <div class="form-group col-6 no-m-b">
+                                <p class="text-grey letter-spacing-1 no-m-b" *ngIf="!ServiceForm.deliveryAddress && !fieldErrors.DeliveryAddress">No delivery address has been selected.</p>               
+                                <p class="letter-spacing-1 black-text no-m-b" *ngIf="ServiceForm.deliveryAddress"> 
+                                    <span class="font-weight-600">{{ServiceForm.deliveryAddress.firstName}} {{ServiceForm.deliveryAddress.lastName}}</span><br/>
+                                    {{ServiceForm.deliveryAddress.street}}, {{ServiceForm.deliveryAddress.city}}, {{ServiceForm.deliveryAddress.state}} <br/>
+                                    {{ServiceForm.deliveryAddress.phone}} 
+                                </p>
+                                <p class="field-validation-error letter-spacing-1 no-m-b" *ngIf="fieldErrors.DeliveryAddress">{{fieldErrors.DeliveryAddress}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-10 centered no-p-lr m-b-40">
+                <button class="btn btn-green btn-medium btn-round m-t-10 width-100 font-16 font-weight-700" [disabled]="processing" (click)="placeOrder();">
+                    Place Order
+                    <span class="loader display-inline-block no-animate no-m-l f-right" *ngIf="processing"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- end content section -->
+
+<!-- Preloader -->
+<div class="preloader opaque-background" [hidden]="!showFullTransparentLoadingIndicator">
+    <svg class="circular" viewBox="25 25 50 50">
+        <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10"></circle>
+    </svg>
+</div>

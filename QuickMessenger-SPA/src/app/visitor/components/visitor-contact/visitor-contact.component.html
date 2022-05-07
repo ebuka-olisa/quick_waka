@@ -1,0 +1,86 @@
+
+<!-- head section -->
+<section class="content-top-margin page-title page-title-small border-top-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-9 col-md-12 wow fadeInUp" data-wow-duration="300ms">
+                <!-- page title -->
+                <h1 class="black-text">Contact Us</h1>
+                <!-- end page title -->
+            </div>
+            <div class="col-lg-3 col-md-12 breadcrumb text-uppercase wow fadeInUp sm-display-none text-right" data-wow-duration="600ms">
+                <!-- breadcrumb -->
+                <ul>
+                    <li><a routerLink="/">Home</a></li>
+                    <li class="gray-text font-weight-300">Contact Us</li>
+                </ul>
+                <!-- end breadcrumb -->
+            </div>
+        </div>
+    </div>
+</section>
+<!-- end head section -->
+
+<!-- content section -->
+<section class="wow fadeIn no-padding">
+    <div class="container-fuild">
+        <div class="row no-margin">
+            <div id="canvas1" class="col-md-12 col-sm-12 no-padding contact-map map">
+                <iframe id="map_canvas1" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d7930.974573045088!2d8.112782516772509!3d6.330854066896918!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x105ca012ce09dfbb%3A0xded0bb1ce2a43581!2s47%20Nsugbe%20Street%2C%20Abakaliki!5e0!3m2!1sen!2sng!4v1627564067904!5m2!1sen!2sng" allowfullscreen="" loading="lazy"></iframe>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="contact-form" class="wow fadeIn padding-top-four">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-4 col-md-6 col-sm-12 m-b-20">
+                <p class="text-med text-uppercase letter-spacing-1 black-text font-weight-600 font-16">Get in Touch</p>
+                <p class="text-med m-b-10">
+                    <i class="fa fa-map-marker p-r-10 display-table-cell"></i>
+                    <label class="display-table-cell">47 Nsugbe Street, Abakaliki, Ebonyi State</label>
+                </p>
+                <p class="text-med m-b-10">
+                    <i class="fa fa-envelope p-r-10 display-table-cell"></i>
+                    <label class="display-table-cell">quickwaka@gmail.com</label>
+                </p>
+                <p class="text-med m-b-10">
+                    <i class="fa fa-phone p-r-10 display-table-cell"></i>
+                    <label class="display-table-cell">+2348102705104, +234811264108</label>
+                </p>
+            </div>
+            <div class="col-lg-8 col-md-6 col-sm-12">
+                <!--<p class="text-med text-uppercase letter-spacing-1 black-text font-weight-600">Contact Form</p>-->
+                <form id="contactusform" (ngSubmit)="send()">
+                    <div id="success" class="no-margin-lr"></div>
+
+                    <div class="form-group">
+                        <input type="text" id="name" name="name" class="input-round no-margin" [(ngModel)]="Message.name" placeholder="Your Name"
+                        [ngClass]="{'input-validation-error': fieldErrors.Name}">
+                        <span *ngIf="fieldErrors.Name" class="field-validation-error ng-hide">{{fieldErrors.Name}}</span>
+                    </div>
+
+                    <div class="form-group">
+                        <input type="email" id="email" name="email" class="input-round no-margin" [(ngModel)]="Message.email" placeholder="Your Email"
+                        [ngClass]="{'input-validation-error': fieldErrors.Email}">
+                        <span *ngIf="fieldErrors.Email" class="field-validation-error ng-hide">{{fieldErrors.Email}}</span>
+                    </div>
+
+                    <div class="form-group">
+                        <textarea placeholder="Your Message" name="comment" class="input-round no-margin" [(ngModel)]="Message.message"
+                        [ngClass]="{'input-validation-error': fieldErrors.Message}"></textarea>
+                        <span *ngIf="fieldErrors.Message" class="field-validation-error ng-hide">{{fieldErrors.Message}}</span>
+                    </div>
+
+                    <button id="contact-us-button" type="submit" class="btn-orange btn btn-small button btn-round xs-margin-bottom-five">
+                    <!--[disabled]="processing">-->
+                        Send message
+                        <span *ngIf="processing" class="loader loader-small display-inline-block pull-right no-animate no-m-t"></span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- End Content Section -->

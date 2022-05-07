@@ -1,0 +1,56 @@
+<div class="myModalContainer" [ngClass]="{'has-loading': !extraAttributesReady}">
+    <div class="modal-header" [hidden]="!extraAttributesReady">
+        <h4 class="modal-title pull-left font-weight-300 font-16">Select Extra Attributes</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="close()" *ngIf="!processing">
+            <i class="mdi mdi-close"></i>
+        </button>
+    </div>
+    <div class="modal-body" [hidden]="!extraAttributesReady">
+        <div class="col-md-12 p-t-5 p-b-5 button-region">
+            <div class="form-group display-flex no-m-b">
+                <div class="flex-grow-100">
+                    <input type="text" #mySearch name='search' placeholder="Search or Create New" class="form-control flex-grow-100 no-m-b" 
+                        [(ngModel)]="Search" (input)="filterItem(mySearch.value)" />
+                </div>
+                <button type="button" class="btn btn-sm no-m-r i-rounded i-orange i-bordered i-grey-disabled font-12 cursor-pointer m-l-5" 
+                    (click)="create()" [disabled]="filteredItems.length > 0 || processing" *ngIf="!SelectedCategoryId">
+                    Create
+                    <span *ngIf="processing" class="loader loader-small display-inline-block ng-hide pull-right no-animate"></span>
+                </button>
+            </div>
+        </div>
+        <div class="col-md-12 modal-body-container">
+            <div class="col-md-12">
+                <div class="col-md-12">
+                    <div class="checkbox-group">
+                        <span *ngFor="let Attribute of filteredItems">
+                            <input type="checkbox" id=checkbox-extra-attribute-{{Attribute.id}} class="filled-in chk-col-light-black"
+                                (change)="toggleExtraAttribute(Attribute)" [checked]="isExtraAttributeSelected(Attribute.id)"
+                                [disabled]="Attribute.candelete == false || Attribute.isFromParent"/>
+                            <label class="font-16 m-b-10 p-l-35" for="checkbox-extra-attribute-{{Attribute.id}}">{{Attribute.name}}</label>
+                        </span>
+                        <span class="display-block m-t-10 m-b-10" *ngIf="filteredItems.length < 1">
+                            <p *ngIf="ExtraAttributes.length == 0">No extra attributes</p>
+                            <p *ngIf="ExtraAttributes.length > 0" class="m-b-5 text-center">No results</p>
+                            <p *ngIf="!SelectedCategoryId && Search && ExtraAttributes.length > 0" class="text-center opacity-5 font-13">The search query can be created as a new "Extra Attribute"</p>
+                        </span>
+                    </div>
+
+                    <p *ngIf="hasDisabled" class="font-12 opacity-7 no-m-b m-t-10 text-center">The disabled attributes have been assigned to products and therefore cannot be removed.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer" [hidden]="!extraAttributesReady">
+        <button type="button" class="btn no-m-r pull-right i-rounded i-bordered font-13 cursor-pointer i-grey-disabled" 
+            (click)="close()" [disabled]="processing">Cancel</button>
+        <button type="button" class="btn no-m-r pull-right i-rounded i-orange i-bordered font-13 cursor-pointer i-grey-disabled" 
+            (click)="save()" [disabled]="filteredItems.length < 1 || processing">Select</button>
+    </div>
+
+    <div class="preloader position-absolute" [hidden]="extraAttributesReady">
+        <svg class="circular" viewBox="25 25 50 50">
+            <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10"></circle>
+        </svg>
+    </div>
+</div>

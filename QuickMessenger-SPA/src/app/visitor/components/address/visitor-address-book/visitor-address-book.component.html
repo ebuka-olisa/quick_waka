@@ -1,0 +1,49 @@
+<div class="myModalContainer">
+  <div class="modal-header">
+      <h4 class="modal-title pull-left font-16 text-uppercase font-weight-600 letter-spacing-2">Address Book</h4>
+      <button type="button" class="close pull-right" aria-label="Close" (click)="close()" *ngIf="!deleting">
+          <i class="mdi mdi-close"></i>
+      </button>
+  </div>
+  <div class="modal-body">
+    <div class="col-md-12 p-t-5 p-b-5 button-region text-right">
+        <button type="button" class="btn no-m-r cursor-pointer btn-black btn-round btn-small no-margin" 
+        [disabled]="deleting" (click)="newAddress()">
+            <i class="fa fa-plus no-m-l text-white"></i> Add New Address
+        </button>
+    </div>
+
+    <div class="col-12 no-p-lr p-b-10 modal-body-container">  
+      <div class="col-12 m-t-10">
+        <div class="address-item display-flex" *ngFor="let Address of Addresses">
+			    <label class="custom-control custom-radio flex-grow-100">
+				    <input name="address" type="radio" class="custom-control-input" value="{{Address.id}}" [(ngModel)]="SelectedAddressId" />
+				    <span class="custom-control-indicator"></span>
+				    <span class="custom-control-description">
+					    <span class="font-weight-600">{{Address.firstName}} {{Address.lastName}}</span><br/>
+					    {{Address.street}}, {{Address.city}}, {{Address.state}}<br/>
+              {{Address.phone}}<br/>
+              <span class="gray-text font-12" *ngIf="Address.defaultAdd">This is your default delivery address</span>
+				    </span>
+			    </label>
+          <div class="button-holder">
+            <button class="btn btn-gray btn-round btn-small" (click)="editAddress(Address)"><i class="fa fa-pencil no-m-l black-text"></i> Edit</button>
+          </div>
+        </div>
+        <div class="m-b-40 p-b-15 m-t-30 p-t-20" *ngIf="!Addresses || Addresses.length == 0">
+          <h5 class="font-13 text-grey text-center">You have not added any address</h5>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <button class="btn btn-orange btn-round btn-medium width-100 no-margin font-weight-700" (click)="selectAddress()" [disabled]="!SelectedAddressId">Select Address</button>
+  </div>
+
+  <!--<div class="preloader position-absolute" [hidden]="addressBookReady">
+    <svg class="circular" viewBox="25 25 50 50">
+        <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10"></circle>
+    </svg>
+  </div>-->
+</div>

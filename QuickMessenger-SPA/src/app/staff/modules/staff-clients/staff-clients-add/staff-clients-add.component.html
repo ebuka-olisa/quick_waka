@@ -1,0 +1,158 @@
+<div class="myModalContainer" [ngClass]="{'has-loading': !editClientReady}">
+    <div class="modal-header" [hidden]="!editClientReady">
+        <h4 class="modal-title pull-left font-weight-300 font-16">{{initialState.title}}</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="close()">
+            <i class="mdi mdi-close"></i>
+        </button>
+    </div>
+    <div class="modal-body" [hidden]="!editClientReady">
+        <form #myForm="ngForm" class="form-horizontal">
+            <div class="col-md-12 p-t-5 p-b-5 button-region">
+                <button type="button" class="btn no-m-r pull-right i-rounded i-red-bordered i-grey-disabled font-16 cursor-pointer m-l-5 icon-only" 
+                *ngIf="editMode && Client.deactivated == false" [disabled]="processing || deactivating" (click)="deactivate()" ngbTooltip="Deactivate" placement="top" container="body">
+                    <i class="fa fa-ban no-m-r" *ngIf="!deactivating"></i>
+                    <span *ngIf="deactivating" class="loader loader-small display-inline-block no-animate no-m-l"></span>
+                </button>
+                <button type="button" class="btn no-m-r pull-right i-rounded i-black-bordered i-grey-disabled font-16 cursor-pointer m-l-5 icon-only" 
+                *ngIf="editMode && Client.deactivated == true" [disabled]="processing || activating" (click)="activate()" ngbTooltip="Activate" placement="top" container="body">
+                    <i class="fa fa-check no-m-r" *ngIf="!activating"></i>
+                    <span *ngIf="activating" class="loader loader-small display-inline-block no-animate no-m-l"></span>
+                </button>
+            </div>
+
+            <div class="col-md-12 no-p-lr modal-body-container">  
+                <div class="col-md-12">
+                    <!-- Picture -->
+                    <div class="form-group col-lg-12 col-xl-2">
+                        <div class="form-group">
+                            <div class="dropzone centered profile-pic no-border">
+                                <div class="dz-preview dz-complete dz-image-preview">  
+                                    <div class="dz-image">
+                                        <img *ngIf="Client.photoUrl" [src]="Client.photoUrl">
+                                        <div *ngIf="!Client.photoUrl" class="no-image"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12 col-lg-12 col-xl-10 no-p-lr">
+                        <!-- General & Contact -->
+                        <div class="col-md-12 no-p-lr">
+
+                            <div class="form-group col-md-12 col-lg-6 no-m-b">
+                                <div class="form-group">
+                                    <h3 class="box-title" ngbAutofocus >General Information</h3>
+                                    <hr class="m-t-0 m-b-15">
+                                </div>
+
+                                <div class="form-group display-flex">
+                                    <label class="control-label font-weight-300 m-b-5 label-group-one">Last Name</label>
+                                    <div class="flex-grow-100">
+                                        <label class="label-group-value">{{Client.lastName}}</label>
+                                    </div>
+                                </div>
+
+                                <div class="form-group display-flex">
+                                    <label class="control-label font-weight-300 m-b-5 label-group-one">First Name</label>
+                                    <div class="flex-grow-100">
+                                            <label class="label-group-value">{{Client.firstName}}</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group col-md-12 col-lg-6 no-m-b">
+                                <div class="form-group">
+                                    <h3 class="box-title">Contact Information</h3>
+                                    <hr class="m-t-0 m-b-15">
+                                </div>
+
+                                <div class="form-group display-flex">
+                                    <label class="control-label font-weight-300 m-b-5 label-group-two">Email</label>
+                                    <div class="flex-grow-100">
+                                        <label class="label-group-value">{{Client.email}}</label>
+                                    </div>
+                                </div>
+
+                                <div class="form-group display-flex">
+                                    <label class="control-label font-weight-300 m-b-5 label-group-two">Phone</label>
+                                    <div class="flex-grow-100">
+                                        <label class="label-group-value">{{Client.phoneNumber}}</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- Role & Gender-->
+                        <div class="col-md-12 no-p-lr">
+                            <!-- Status -->
+                            <div class="form-group col-md-12 col-lg-6">
+                                <div class="form-group">
+                                    <h3 class="box-title">Status</h3>
+                                    <hr class="m-t-0 m-b-15">
+                                </div>
+                                <div class="form-group">
+                                    <div class="form-check no-p-l">
+                                        <label class="label-group-value no-p-l">
+                                            <span class="dot" [ngClass]="{'active': Client.deactivated == false}"></span>
+                                            {{Client.deactivated == false ? 'Active' : 'Inactive'}}
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Gender -->
+                            <div class="form-group col-md-12 col-lg-6">
+                                <div class="form-group">
+                                    <h3 class="box-title">Gender</h3>
+                                    <hr class="m-t-0 m-b-15">
+                                </div>
+                                <div class="form-group">
+                                    <div class="form-check no-p-l">
+                                        <label class="label-group-value no-p-l text-capitalize">{{Client.gender}}</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Address -->
+                        <div class="form-group col-md-12" *ngFor="let address of getActiveAddresses(); let i = index;">
+                            <div class="form-group">
+                                <h3 class="box-title" [ngClass]="{'m-b-5': i > 0}">Address {{i + 1}}</h3>
+                                <hr class="m-t-0 m-b-15">
+                            </div>
+            
+                            <div class="form-group display-flex">
+                                <label class="control-label font-weight-300 m-b-5 label-group-two">Street</label>
+                                <div class="flex-grow-100">
+                                    <label class="label-group-value">{{address.street}}</label>
+                                </div>
+                            </div>
+      
+                            <div class="form-group col-md-12 col-lg-6 no-p-l md-no-p-lr display-flex">
+                                <label class="control-label font-weight-300 m-b-5 label-group-two">City</label>
+                                <div class="flex-grow-100">
+                                    <label class="label-group-value">{{address.city}}</label>
+                                </div>
+                            </div>
+            
+                            <div class="form-group col-md-12 col-lg-6 no-p-r md-no-p-lr display-flex">
+                                <label class="control-label font-weight-300 m-b-5 label-group-two">State</label>
+                                <div class="flex-grow-100">
+                                    <label class="label-group-value">{{address.state}}</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="preloader position-absolute" [hidden]="editClientReady">
+        <svg class="circular" viewBox="25 25 50 50">
+            <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10"></circle>
+        </svg>
+    </div>
+</div>

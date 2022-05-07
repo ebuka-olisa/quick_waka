@@ -1,0 +1,7 @@
+<div class="dropzone profile-pic" [ngClass]="cssClass" [dropzone]="dropZoneConfig" (addedFile)="fileAdded($event)" 
+  (removedFile)="fileRemoved()"></div>
+<button type="button" (click)="changePicture()" class="btn display-block centered i-rounded i-grey-disabled i-black font-12 cursor-pointer 
+    m-t-10 text-capitalize" [disabled]="!isLoaded && !Picture">
+    <i class="fa fa-pencil"></i>
+    Change {{PictureText}}
+</button>

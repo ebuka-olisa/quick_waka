@@ -1,0 +1,23 @@
+<section class="position-relative">
+  <div class="inner-preloader preloader" *ngIf="processing">
+    <svg class="circular" viewBox="25 25 50 50">
+        <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10"></circle>
+    </svg>
+  </div>
+
+  <div class="container" *ngIf="!processing">
+      <div class="row col-md-9 col-lg-6 center-col" *ngIf="confirmed">
+          <div class="col-md-12 text-center wow fadeInUp">
+              <h3 class="section-title padding-three padding-bottom-one margin-bottom-half font-28">EMAIl CONFIRMED</h3>
+              <p class="black-text margin-ten no-margin-top font-14">Thank you for confirming your email. Please <a routerLink="/account/signin" class="orange-text text-decoration-underline">click here to Sign In.</a></p>
+          </div>
+      </div>
+
+      <div class="row col-md-9 col-lg-6 center-col" *ngIf="!confirmed">
+        <div class="col-md-12 text-center wow fadeInUp">
+            <h3 class="section-title padding-three padding-bottom-one margin-bottom-half font-28 text-error"><i class="fa fa-exclamation-triangle text-error m-r-5"></i>EMAIl NOT CONFIRMED</h3>
+            <p class="black-text margin-ten no-margin-top font-14">Your email was not confirmed please try clicking the link sent to your email address again.</p>
+        </div>
+    </div>
+  </div>
+</section>

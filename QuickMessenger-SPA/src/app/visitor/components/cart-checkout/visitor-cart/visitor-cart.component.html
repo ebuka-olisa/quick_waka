@@ -1,0 +1,222 @@
+<!-- search section -->
+<section class="bg-gray content-top-margin p-t-10 p-b-10 sm-padding-two">
+  <div class="container">
+      <div class="row">
+          <div class="col-lg-8 center-col">
+              <form (submit)="search()" action="#">
+                  <div class="display-flex">
+                      <div class="display-flex flex-grow-100 special-search input-round bg-white">
+                          <select class="width-auto no-m-b bg-white" name="section" [(ngModel)]="Search.section">
+                              <option value="products">Product</option>
+                              <option value="vendors">Vendor</option>
+                          </select>
+                          <input type="text" id="textbox" name="name" class="flex-grow-100" placeholder="Search products and vendors" [(ngModel)]="Search.searchTerm">
+                      </div>
+                      <button class="btn btn-orange btn-small btn-round font-12 margin-left-one no-margin-bottom no-margin-top no-margin-right" type="submit">Search</button>
+                  </div>
+              </form>
+          </div>
+      </div>
+  </div>
+</section>
+<!-- end search section -->
+
+<!-- head section -->
+<section class="content-top-margin page-title page-title-small bg-white no-margin-top">
+  <div class="container">
+      <div class="row">
+          <div class="col-lg-9 col-md-12 wow fadeInUp" data-wow-duration="300ms">
+              <!-- page title -->
+              <h1 class="black-text">Cart</h1>
+              <!-- end page title -->
+          </div>
+          <div class="col-lg-3 col-md-12 breadcrumb text-uppercase wow fadeInUp xs-display-none text-right" data-wow-duration="600ms">
+              <!-- breadcrumb -->
+              <ul>
+                  <li><a routerLink="/">Home</a></li>
+                  <li class="gray-text font-weight-300">Cart</li>
+              </ul>
+              <!-- end breadcrumb -->
+          </div>
+      </div>
+  </div>
+</section>
+<!-- end head section -->
+
+<!-- content section -->
+<section class="content-section bg-gray padding-two">
+  <div class="container md-container-fluid">
+      <div class="row" *ngIf="Cart && Cart.serviceOrders && Cart.serviceOrders.length > 0">
+          <div class="col-lg-8">
+            <div class="col-12 shop-cart-table md-no-padding-lr">
+                <div *ngFor="let ServiceOrder of Cart.serviceOrders; let i = index">
+                    <div class="cart-section bg-white" *ngFor="let Order of ServiceOrder.orders; let j = index">
+                        <div class="block-pending-update" [hidden]="!blockCart || (blockCartServiceIndex === i && blockCartOrderIndex === j)"></div>
+                        <h3 class="p-b-3">
+                            {{ServiceOrder.service.name}} <span *ngIf="ServiceOrder.orders.length > 1">#{{j + 1}}</span>
+                            <a href="javascript:void(0)" class="pull-right" (click)="removeOrder(i, j)" [hidden]="blockCart"><i class="fa fa-times"></i></a>
+                        </h3>
+                        <h5 *ngIf="Order.isPickup" class="text-grey p-b-15">Pickup Errand</h5>
+                        <h5 *ngIf="!Order.isPickup" class="text-grey p-b-15">Purchase Errand</h5>
+
+                        <table class="table shop-cart text-center no-m-b" *ngIf="!Order.isPickup">
+                            <thead class="small-cart-display-none ">
+                                <tr>
+                                    <th class="first"></th>
+                                    <th class="text-left text-uppercase font-weight-600 letter-spacing-2 text-small black-text">Product</th>
+                                    <th class="text-left text-uppercase font-weight-600 letter-spacing-2 text-small black-text">Price</th>
+                                    <th class="text-left text-uppercase font-weight-600 letter-spacing-2 text-small black-text">Quantity</th>
+                                    <th class="text-left text-uppercase font-weight-600 letter-spacing-2 text-small black-text">Sub-Total</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let Item of Order.purchaseItems; let k = index">
+                                    <td class="product-thumbnail text-left small-cart-top-border">
+                                        <a href="javascript:void(0)" (click)="showProduct(Item)"><img [src]="Item.pictureUrl" alt="" ></a>
+                                    </td>
+                                    <td class="text-left product-name small-cart-top-border">
+                                        <a href="javascript:void(0)" (click)="showProduct(Item)">{{Item.name}}</a>
+                                        <span class="display-block font-12" *ngIf="Item.vendor">Sold by <a class="orange-text" routerLink="/vendors/{{Item.vendor.id}}" target='_blank'>{{Item.vendor.name}}</a></span>
+                                        <span class="small-cart-display-block black-text font-weight-600 m-b-5" *ngIf="Item.quantity == 1">₦{{Item.price | number}}</span>
+                                        <span class="small-cart-display-block gray-text m-b-5" *ngIf="Item.quantity > 1">₦{{Item.price | number}} x {{Item.quantity}} = <span class="font-weight-600 black-text">₦{{Item.price * Item.quantity | number}}</span></span>
+                                        <div class="small-cart-display-block product-quantity">
+                                            <div class="display-flex">
+                                                <button class="btn btn-gray no-margin fa fa-minus" (click)="decreaseQuantity(Item)"></button>
+                                                <input type="number" name="quantity" [(ngModel)]="Item.quantity" />
+                                                <button class="btn btn-gray no-margin fa fa-plus" (click)="increaseQuantity(Item)"></button>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="text-left font-weight-600 small-cart-display-none">
+                                        ₦{{Item.price | number}}
+                                    </td>
+                                    <td class="product-quantity small-cart-display-none">
+                                        <div class="display-flex">
+                                            <button class="btn btn-gray no-margin fa fa-minus" (click)="decreaseQuantity(Item, i, j)"></button>
+                                            <input type="number" name="quantity" [(ngModel)]="Item.quantity" />
+                                            <button class="btn btn-gray no-margin fa fa-plus" (click)="increaseQuantity(Item, i, j)"></button>
+                                        </div>
+                                    </td>
+                                    <td class="product-subtotal text-left font-weight-600 small-cart-display-none ">₦{{Item.price * Item.quantity | number}}</td>
+                                    <td class="product-remove text-center small-cart-top-border">
+                                        <a href="javascript:void(0)" (click)="removePurcahseItem(i, j, k)" [hidden]="blockCart"><i class="fa fa-times"></i></a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="6" class="text-right font-weight-600 font-15 border-top text-uppercase letter-spacing-2 p-r-40">
+                                    Sub-Total<span class="font-weight-700 font-16 p-l-15 no-letter-spacing">₦{{purchaseTotal(Order) | number}}</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <table class="table shop-cart text-center no-m-b" *ngIf="Order.isPickup">
+                            <thead class="small-cart-display-none">
+                                <tr>
+                                    <th class="first" *ngIf="Order.pickupItem.pictures && Order.pickupItem.pictures.length > 0"></th>
+                                    <th class="text-left text-uppercase font-weight-600 letter-spacing-2 text-small black-text">Name</th>
+                                    <th class="text-left text-uppercase font-weight-600 letter-spacing-2 text-small black-text">Value</th>
+                                    <th class="text-left text-uppercase font-weight-600 letter-spacing-2 text-small black-text">Pieces</th>
+                                    <th class="text-left text-uppercase font-weight-600 letter-spacing-2 text-small black-text">Fragile</th>
+                                    <th class="text-left text-uppercase font-weight-600 letter-spacing-2 text-small black-text">Size</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="product-thumbnail text-left small-cart-top-border" *ngIf="Order.pickupItem.pictures && Order.pickupItem.pictures.length > 0">
+                                        <a href="javascript:void(0)"><img [src]="allowImageURL(Order.pickupItem.pictures[0].url)" alt="" ></a>
+                                    </td>
+                                    <td class="text-left product-name small-cart-top-border">
+                                        <a href="javascript:void(0)">{{Order.pickupItem.name}}</a>
+                                        <div class="small-cart-display-block">
+                                            <span>Value: <span class="black-text">₦{{Order.pickupItem.value | number}}</span></span>
+                                            <span class="m-l-15">Pieces: <span class="black-text">{{Order.pickupItem.count}}</span></span>
+                                        </div>
+                                        <div class="small-cart-display-block">
+                                            <span>Fragile: <span class="black-text">{{Order.pickupItem.isFragile == 'true' || Order.pickupItem.isFragile == true ? 'Yes' : 'No'}}</span></span>
+                                            <span class="m-l-15">Size: <span class="black-text text-capitalize">{{Order.pickupItem.size}}</span></span>
+                                        </div>
+                                    </td>
+                                    <td class="text-left small-cart-display-none">
+                                        ₦{{Order.pickupItem.value | number}}
+                                    </td>
+                                    <td class="text-left small-cart-display-none">
+                                        {{Order.pickupItem.count}}
+                                    </td>
+                                    <td class="text-left small-cart-display-none">
+                                        {{Order.pickupItem.isFragile == 'true' || Order.pickupItem.isFragile == true ? 'Yes' : 'No'}}
+                                    </td>
+                                    <td class="text-left text-capitalize small-cart-display-none">
+                                        {{Order.pickupItem.size}}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div class=" update-section" [ngClass]="{'show m-t-10 m-b-15': ChangesMade[i][j]}" *ngIf="!Order.isPickup">
+                            <button class="btn btn-black btn-round btn-small no-m-t no-m-b m-r-5" (click)="updateOrder(i, j)">Update</button>
+                            <button class="btn btn-round btn-small no-m-t no-m-b" (click)="cancelOrderUpdate(i, j)">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+          </div>
+          <div class="col-lg-4 m-b-40">
+              <div class="col-12 shop-cart-summary bg-white no-p-b">
+                <div class="block-pending-update" [hidden]="!blockCart"></div>
+                <h3 class="border-bottom">Order Summary</h3>
+                  <table class="table cart-total">
+                      <tbody>
+                          <tr *ngIf="cartTotal(Order) > 0">
+                              <th class="text-left no-padding-left text-uppercase font-weight-600 letter-spacing-2 text-small xs-no-padding">Sub-total</th>
+                              <td class="text-uppercase text-right no-padding-right font-weight-700 black-text xs-no-padding">₦{{cartTotal(Order) | number}}</td>
+                          </tr>
+                          <tr>
+                              <th class="text-left no-padding-left text-uppercase font-weight-600 letter-spacing-2 text-small xs-no-padding">Delivery</th>
+                              <td class="text-right no-padding-right font-weight-400 gray-text text-small xs-no-padding">
+                                Confirm delivery address at checkout to see delivery charges
+                              </td>
+                          </tr>
+                          <tr *ngIf="cartTotal(Order) > 0">
+                              <td class="no-padding" colspan="2">
+                                  <hr>
+                              </td>
+                          </tr>
+                          <tr class="total" *ngIf="cartTotal(Order) > 0">
+                              <th class="text-uppercase text-left no-padding-left font-weight-700 text-large xs-no-padding">Total</th>
+                              <td class="text-uppercase text-right no-padding-right font-weight-700 black-text text-large no-letter-spacing xs-no-padding">₦{{cartTotal(Order) | number}}</td>
+                          </tr>
+                          <tr *ngIf="cartTotal(Order) > 0">
+                              <td class="no-padding" colspan="2">
+                                  <hr class="no-margin-bottom">
+                              </td>
+                          </tr>
+                          <tr class="total" *ngIf="cartTotal(Order) > 0">
+                              <th class="text-right padding-one no-padding-bottom no-padding-right text-dark-warning font-weight-400 text-small" colspan="2">Excluding delivery charges</th>
+                          </tr>
+                      </tbody>
+                  </table>
+                  <button class="btn btn-green btn-round no-m-t checkout-btn" routerLink="/checkout">Proceed to Checkout</button>
+              </div>
+          </div>
+      </div>
+
+      <div class="row" *ngIf="!Cart || !Cart.serviceOrders || Cart.serviceOrders.length == 0">
+        <div class="col-lg-12 text-center m-t-30 m-b-40">
+            <i class="fa fa-shopping-cart orange-text font-35 m-t-20"></i>
+            <h3 class="font-18 letter-spacing-2 m-t-10">Your Shoppping cart is empty</h3>
+            <p class="m-b-40">There are currently no orders in your shopping cart</p>
+        </div>
+      </div>
+  </div>
+</section>
+<!-- end content section -->
+
+<!-- Preloader -->
+<div class="preloader opaque-background" [hidden]="!showFullTransparentLoadingIndicator">
+    <svg class="circular" viewBox="25 25 50 50">
+        <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10"></circle>
+    </svg>
+</div>

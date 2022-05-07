@@ -1,0 +1,81 @@
+<div class="myModalContainer" [ngClass]="{'has-loading': !measurementMetricsReady}">
+    <div class="modal-header" [hidden]="!measurementMetricsReady">
+        <h4 class="modal-title pull-left font-weight-300 font-16" *ngIf="!createOpen">Select Measurement Metrics</h4>
+        <h4 class="modal-title pull-left font-weight-300 font-16" *ngIf="createOpen">Add Measurement Metric</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="close()" *ngIf="!processing">
+            <i class="mdi mdi-close"></i>
+        </button>
+    </div>
+    <div class="modal-body" [hidden]="!measurementMetricsReady" [ngClass]="{'m-t-15 m-b-15': createOpen}">
+        <div class="col-md-12 p-t-5 p-b-5" [ngClass]="{'button-region': !createOpen}">
+            <div class="form-group display-flex no-m-b" *ngIf="!createOpen">
+                <div class="flex-grow-100">
+                    <input type="text" #mySearch name='search' placeholder="Search or Create New" class="form-control flex-grow-100 no-m-b" 
+                        [(ngModel)]="Search" (input)="filterItem(mySearch.value)" />
+                </div>
+                <button type="button" class="btn btn-sm no-m-r i-rounded i-orange i-bordered i-grey-disabled font-12 cursor-pointer m-l-5" 
+                    (click)="openCreate()" [disabled]="filteredItems.length > 0 || processing">
+                    Add
+                    <span *ngIf="processing" class="loader loader-small display-inline-block ng-hide pull-right no-animate"></span>
+                </button>
+            </div>
+            <form #myForm="ngForm" (ngSubmit)="create()" class="form-horizontal" *ngIf="createOpen">
+                <div class="form-group display-flex">
+                    <label class="control-label font-weight-300 m-b-5 label-group-one">Name</label>
+                    <div class="flex-grow-100">
+                        <input type="text" name='name' placeholder="" class="form-control flex-grow-100 no-m-b" required
+                            [(ngModel)]="NewMeasurementMetric.name" />
+                    </div>
+                </div>
+                <div class="form-group display-flex">
+                    <label class="control-label font-weight-300 m-b-5 label-group-one">Symbol</label>
+                    <div class="flex-grow-100">
+                        <input type="text" name='symbol' placeholder="" class="form-control flex-grow-100 no-m-b" required
+                            [(ngModel)]="NewMeasurementMetric.symbol" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn no-m-r m-l-5 pull-right i-rounded i-orange i-bordered font-13 cursor-pointer i-grey-disabled" 
+                        [disabled]="creating || !myForm.form.valid">Create
+                        <span *ngIf="creating" class="loader loader-small display-inline-block ng-hide pull-right no-animate"></span>
+                    </button>
+                    <button type="button" class="btn no-m-r pull-right i-rounded i-bordered font-13 cursor-pointer i-grey-disabled" 
+                        (click)="closeCreate()" [disabled]="creating">Cancel</button>
+                </div>
+            </form>
+        </div>
+        <div class="col-md-12 modal-body-container" *ngIf="!createOpen">
+            <div class="col-md-12">
+                <div class="col-md-12">
+                    <div class="checkbox-group">
+                        <span *ngFor="let MeasurementMetric of filteredItems">
+                            <input type="checkbox" id=checkbox-measurement-metric-{{MeasurementMetric.id}} class="filled-in chk-col-light-black"
+                                (change)="toggleMeasurementMetric(MeasurementMetric)" [checked]="isMeasurementMetricSelected(MeasurementMetric.id)"
+                                [disabled]="MeasurementMetric.canDelete == false"/>
+                            <label class="font-16 m-b-10 p-l-35" for="checkbox-measurement-metric-{{MeasurementMetric.id}}">{{MeasurementMetric.name}} ({{MeasurementMetric.symbol}})</label>
+                        </span>
+                        <span class="display-block m-t-10 m-b-10" *ngIf="filteredItems.length < 1">
+                            <p *ngIf="MeasurementMetrics.length == 0">No measurement metrics</p>
+                            <p *ngIf="MeasurementMetrics.length > 0" class="m-b-5 text-center">No results</p>
+                            <p *ngIf="Search && MeasurementMetrics.length > 0" class="text-center opacity-5 font-13">The search query can be created as a new "Measurement Metric"</p>
+                        </span>
+                    </div>
+
+                    <p *ngIf="hasDisabled && filteredItems.length > 0" class="font-12 opacity-7 no-m-b m-t-10 text-center">The disabled measurement metrics have been assigned to products and therefore cannot be removed.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer" [hidden]="!measurementMetricsReady" *ngIf="!createOpen">
+        <button type="button" class="btn no-m-r pull-right i-rounded i-bordered font-13 cursor-pointer i-grey-disabled" 
+            (click)="activeModal.dismiss()" [disabled]="processing">Cancel</button>
+        <button type="button" class="btn no-m-r pull-right i-rounded i-orange i-bordered font-13 cursor-pointer i-grey-disabled" 
+            (click)="save()" [disabled]="filteredItems.length < 1 || processing">Select</button>
+    </div>
+
+    <div class="preloader position-absolute" [hidden]="measurementMetricsReady">
+        <svg class="circular" viewBox="25 25 50 50">
+            <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10"></circle>
+        </svg>
+    </div>
+</div>

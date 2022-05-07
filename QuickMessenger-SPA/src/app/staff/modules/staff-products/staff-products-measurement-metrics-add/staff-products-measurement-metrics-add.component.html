@@ -1,0 +1,55 @@
+<div class="myModalContainer" [ngClass]="{'has-loading': !editMeasurementMetricReady}">
+    <div class="modal-header" [hidden]="!editMeasurementMetricReady">
+        <h4 class="modal-title pull-left font-weight-300 font-16">{{initialState.title}}</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="close()" *ngIf="!processing">
+            <i class="mdi mdi-close"></i>
+        </button>
+    </div>
+  <div class="modal-body" [hidden]="!editMeasurementMetricReady">
+        <form #myForm="ngForm" (ngSubmit)="save()" class="form-horizontal">
+            <div class="col-md-12 p-t-5 p-b-5 button-region">
+                <button type="button" class="btn no-m-r pull-right i-rounded i-red-bordered i-grey-disabled font-16 cursor-pointer m-l-5 icon-only" 
+                *ngIf="editMode" [disabled]="processing || deleting" (click)="delete()" ngbTooltip="Delete Extra Attribute" placement="top" container="body">
+                    <i class="fa fa-trash-o no-m-r" *ngIf="!deleting"></i>
+                    <span *ngIf="deleting" class="loader loader-small display-inline-block no-animate no-m-l"></span>
+                </button>
+                <button type="submit" class="btn no-m-r pull-right i-rounded i-orange i-grey-disabled font-13 cursor-pointer"
+                [disabled]="processing || !myForm.form.valid || (editMode && !changesMade())">
+                    <i class="fa fa-save"></i>
+                    Save
+                    <span *ngIf="processing" class="loader loader-small display-inline-block ng-hide pull-right no-animate"></span>
+                </button>
+            </div>
+
+            <div class="col-md-12 modal-body-container">  
+                <!-- General & Contact -->
+                <div class="col-md-12 m-t-10">
+
+                    <div class="form-group p-lr-15 display-flex">
+                        <label class="control-label font-weight-400 m-b-5 label-group-two text-black">Name</label>
+                        <div class="flex-grow-100">
+                        <input type="text" name='name' class="form-control flex-grow-100" [(ngModel)]="MeasurementMetric.name"
+                            required [ngClass]="{'input-validation-error': fieldErrors.Name}" />
+                        <span *ngIf="fieldErrors.Name" class="field-validation-error white-space-pre">{{fieldErrors.Name}}</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group p-lr-15 display-flex">
+                        <label class="control-label font-weight-400 m-b-5 label-group-two text-black">Symbol</label>
+                        <div class="flex-grow-100">
+                            <input type="text" name='symbol' class="form-control flex-grow-100" [(ngModel)]="MeasurementMetric.symbol"
+                                required [ngClass]="{'input-validation-error': fieldErrors.Symbol}" />
+                            <span *ngIf="fieldErrors.Symbol" class="field-validation-error white-space-pre">{{fieldErrors.Symbol}}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="preloader position-absolute" [hidden]="editMeasurementMetricReady">
+        <svg class="circular" viewBox="25 25 50 50">
+            <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10"></circle>
+        </svg>
+    </div>
+</div>

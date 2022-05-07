@@ -1,0 +1,67 @@
+<div class="myModalContainer" [ngClass]="{'has-loading': !descriptionTextAreaReady || !editExtraAttributeReady}">
+    <div class="modal-header" [hidden]="!descriptionTextAreaReady || !editExtraAttributeReady">
+        <h4 class="modal-title pull-left font-weight-300 font-16">{{initialState.title}}</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="close()" *ngIf="!processing">
+        <i class="mdi mdi-close"></i>
+        </button>
+    </div>
+    <div class="modal-body" [hidden]="!descriptionTextAreaReady || !editExtraAttributeReady">
+        <form #myForm="ngForm" (ngSubmit)="save()" class="form-horizontal">
+            <div class="col-12 p-t-5 p-b-5 button-region">
+            <button type="button" class="btn no-m-r pull-right i-rounded i-red-bordered i-grey-disabled font-16 cursor-pointer m-l-5 icon-only" 
+            *ngIf="editMode" [disabled]="processing || deleting" (click)="delete()" ngbTooltip="Delete Extra Attribute" placement="top" container="body">
+                <i class="fa fa-trash-o no-m-r" *ngIf="!deleting"></i>
+                <span *ngIf="deleting" class="loader loader-small display-inline-block no-animate no-m-l"></span>
+            </button>
+            <button type="submit" class="btn no-m-r pull-right i-rounded i-orange i-grey-disabled font-13 cursor-pointer"
+                [disabled]="processing || !myForm.form.valid || (editMode && !changesMade())">
+                <i class="fa fa-save"></i>
+                Save
+                <span *ngIf="processing" class="loader loader-small display-inline-block ng-hide pull-right no-animate"></span>
+            </button>
+            </div>
+
+            <div class="col-12 modal-body-container">  
+                <!-- General & Contact -->
+                <div class="col-md-12">
+                    <div class="form-group p-lr-15">
+                        <h3 class="box-title font-14" ngbAutofocus>Name</h3>
+                        <hr class="m-t-0 m-b-10">
+                    </div>
+                    <div class="form-group display-flex p-lr-15">
+                        <div class="flex-grow-100">
+                            <input type="text" name='name' class="form-control big-input flex-grow-100" [(ngModel)]="ExtraAttribute.name"
+                            required [ngClass]="{'input-validation-error': fieldErrors.Name}" />
+                            <span *ngIf="fieldErrors.Name" class="field-validation-error white-space-pre">{{fieldErrors.Name}}</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group p-lr-15 m-t-10">
+                        <h3 class="box-title font-14" ngbAutofocus>Description <h6>(Optional)</h6></h3>
+                        <hr class="m-t-0 m-b-10">
+                    </div>
+
+                    <div class="form-group p-lr-15">
+                        <tinymce name="description" [(ngModel)]="ExtraAttribute.description" [config]="descriptionTextAreaConfig" (ready)="descriptionReady()"></tinymce>
+                    </div>
+
+                    <!---<div class="col-md-12 col-lg-7 m-b-20">
+                        <div class="form-group">
+                            <h3 class="box-title" ngbAutofocus>Description</h3>
+                            <hr class="m-t-0 m-b-15">
+                        </div>
+                        
+                        <tinymce name="description" [(ngModel)]="Category.description" [config]="descriptionTextAreaConfig" (ready)="descriptionReady()"></tinymce>
+                    </div>-->
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="preloader position-absolute" [hidden]="descriptionTextAreaReady && editExtraAttributeReady">
+        <svg class="circular" viewBox="25 25 50 50">
+            <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10"></circle>
+        </svg>
+    </div>
+</div>
+  

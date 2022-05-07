@@ -1,0 +1,126 @@
+<div class="myModalContainer" [ngClass]="{'has-loading': !descriptionTextAreaReady || !categoriesReady || !editCategoryReady}">
+    <div class="modal-header" [hidden]="!descriptionTextAreaReady || !categoriesReady || !editCategoryReady">
+        <h4 class="modal-title pull-left font-weight-300 font-16">{{initialState.title}}</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="close()" *ngIf="!processing">
+            <i class="mdi mdi-close"></i>
+        </button>
+    </div>
+    <div class="modal-body" [hidden]="!descriptionTextAreaReady || !categoriesReady || !editCategoryReady">
+        <form #myForm="ngForm" (ngSubmit)="save()" class="form-horizontal" autocomplete="off">
+            <input autocomplete="off" name="hidden" type="text" style="display:none;">
+            <div class="col-md-12 p-t-5 p-b-5 button-region">
+                <button type="button" class="btn no-m-r pull-right i-rounded i-red-bordered i-grey-disabled font-16 cursor-pointer m-l-5 icon-only" 
+                    *ngIf="editMode" [disabled]="processing || deleting" (click)="delete()" ngbTooltip="Delete Category" placement="top" container="body">
+                    <i class="fa fa-trash-o no-m-r" *ngIf="!deleting"></i>
+                    <span *ngIf="deleting" class="loader loader-small display-inline-block no-animate no-m-l"></span>
+                </button>
+                <button type="submit" class="btn no-m-r pull-right i-rounded i-orange i-grey-disabled font-13 cursor-pointer"
+                    [disabled]="processing || deleting || !myForm.form.valid || (editMode && !changesMade())">
+                    <i class="fa fa-save"></i>
+                    Save
+                    <span *ngIf="processing" class="loader loader-small display-inline-block ng-hide pull-right no-animate"></span>
+                </button>
+            </div>
+
+            <div class="col-md-12 no-p-lr modal-body-container">
+                <!-- Name -->
+                <div class="col-md-12">    
+                    <div class="form-group p-lr-15">
+                        <h3 class="box-title">Name</h3>
+                        <hr class="m-t-0 m-b-10">
+                    </div>  
+                    <div class="form-group display-flex p-lr-15">
+                        <div class="flex-grow-100">
+                            <input type="text" name='name' class="form-control big-input flex-grow-100" [(ngModel)]="Category.name"
+                            required [ngClass]="{'input-validation-error': fieldErrors.Name}" />
+                            <span *ngIf="fieldErrors.Name" class="field-validation-error white-space-pre">{{fieldErrors.Name}}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-12 m-t-5">
+                    <!-- Description -->
+                    <div class="col-md-12 col-lg-7 m-b-20">
+                        <div class="form-group">
+                            <h3 class="box-title" ngbAutofocus>Description <h6>(Optional)</h6></h3>
+                            <hr class="m-t-0 m-b-10">
+                        </div>
+                        
+                        <tinymce name="description" [(ngModel)]="Category.description" [config]="descriptionTextAreaConfig" (ready)="descriptionReady()"></tinymce>
+                    </div>
+                    <div class="col-md-12 col-lg-5">
+                        <!-- Parent -->
+                        <div class="form-group col-md-12 no-p-lr m-b-0">
+                            <h3 class="box-title">Parent <h6>(Optional)</h6></h3>
+                            <hr class="m-t-0 m-b-10">
+                        </div>
+
+                        <div class="form-group col-md-12 no-p-lr">
+                            <!--  (onFocus)="selectizeFocus($event)" [errorClass]="input-validation-error" -->
+                            <ng-selectize [config]="selectizeConfig" [options]="Categories" 
+                            name="parent" [(ngModel)]="Category.parentId" (ngModelChange)="getParentProperties()"
+                            [ngClass]="{'input-validation-error': fieldErrors.Parent}"></ng-selectize>
+                            <span *ngIf="fieldErrors.Parent" class="field-validation-error white-space-pre">{{fieldErrors.Parent}}</span>
+                        </div>
+
+                        <!-- Extra Attributes -->
+                        <div class="form-group col-md-12 m-t-5 no-p-lr m-b-0">
+                            <h3 class="box-title m-b-5">Extra Attributes <h6>(Optional)</h6></h3>
+                            <hr class="m-t-0 m-b-5">
+                            <button type="button" class="btn no-m-r pull-left i-rounded i-orange-simple font-12 cursor-pointer"
+                                (click)="addExtraAttribute()"> <!--[disabled]="retrievingAttributes">-->
+                                <i class="fa fa-plus"></i> Add Attribute
+                                <!--<span *ngIf="retrievingAttributes" class="loader loader-small display-inline-block no-animate no-m-l"></span>-->
+                            </button>
+                        </div>
+
+                        <div class="form-group col-md-12 m-t-15 no-p-lr">
+                            <table class="table shop-cart info-table modal-table">
+                                <thead>
+                                    <tr class="sortable">
+                                        <th class="text-left font-weight-400 font-12 opacity-5">
+                                            Name
+                                        </th>
+                                        <th class="text-left font-weight-400 font-12 opacity-5">
+                                            Measurement Metrics
+                                        </th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let ExtraAtribute of SelectedExtraAttributes" class="cursor-pointer">
+                                        <td class="text-black">{{ExtraAtribute.name}}</td>
+                                        <td>
+                                            <span class="measurementMetricListItem" *ngFor="let item of getPropertiesWithThisExtraAttribute(ExtraAtribute.id)">
+                                                {{item.measurementTypeSymbol}}
+                                                <i class="fa fa-close p-l-5" (click)="removeProperty(item)" *ngIf="!ExtraAtribute.isFromParent"></i>
+                                            </span>
+                                            <button type="button" class="btn no-m-r i-rounded i-black border-radius-5 font-13 cursor-pointer icon-only-modal smaller m-t-3"
+                                                ngbTooltip="Add Measurement Metric" placement="top" container="body" (click)="addMeasurementMetric(ExtraAtribute)"
+                                                *ngIf="!ExtraAtribute.isFromParent">
+                                                <i class="fa fa-plus no-m-r"></i>
+                                            </button>
+                                        </td>
+                                        <td>
+                                            <button type="button" class="btn pull-right no-m-r i-rounded i-red-simple font-16 cursor-pointer icon-only-modal smaller"
+                                                ngbTooltip="Remove Extra Attribute" placement="top" container="body" (click)="removeExtraAttribute(ExtraAtribute)">
+                                                <i class="fa fa-remove no-m-r"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr *ngIf="SelectedExtraAttributes.length == 0"><td colspan="2">No extra attributes</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="preloader position-absolute" [hidden]="descriptionTextAreaReady && categoriesReady && editCategoryReady">
+        <svg class="circular" viewBox="25 25 50 50">
+            <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10"></circle>
+        </svg>
+    </div>
+</div>

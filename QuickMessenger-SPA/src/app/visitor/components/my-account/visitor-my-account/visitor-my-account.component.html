@@ -1,0 +1,51 @@
+<!-- content section -->
+<section class="content-section bg-gray padding-two my-account">
+    <div class="container md-container-fluid">
+        <div class="row">
+            <div class="col-lg-3">
+                <!--<div class="menu-item bg-white menu-header">
+                    <div class="badge">
+                        <span>{{User.firstName.charAt(0)}}{{User.firstName.charAt(1)}}</span>
+                    </div>
+                    <div>
+                        Hi,<br/>
+                        <p class="no-m-b">{{User.firstName}}</p>
+                        <p>{{User.lastName}}</p>
+                    </div>
+                </div>-->
+                <div class="menu-item-holder">
+                    <div class="menu-item bg-white" [ngClass]="{'active': ActivePage == 'profile'}">
+                        <a routerLink="/my-account/profile"><i class="mdi mdi-account-card-details"></i> <label>My profile</label></a>
+                    </div>
+                    <div class="menu-item bg-white" [ngClass]="{'active': ActivePage == 'change-password'}" *ngIf="AllowPasswordChange">
+                        <a routerLink="/my-account/change-password"><i class="mdi mdi-key"></i> <label>Change Password</label></a>
+                    </div>
+                    <div class="menu-item bg-white" [ngClass]="{'active': ActivePage == 'address'}">
+                        <a routerLink="/my-account/address-book"><i class="mdi mdi-home-variant"></i> <label>Address Book</label></a>
+                    </div>
+                    <div class="menu-item bg-white" [ngClass]="{'active': ActivePage == 'orders'}">
+                        <a routerLink="/my-account/orders"><i class="mdi mdi-basket"></i> <label>My Orders</label></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-9">
+                <div class="col-12 bg-white my-account-content">
+                    <router-outlet></router-outlet>
+                    <div class="preloader position-absolute" [hidden]="!showLoadingIndicator">
+                        <svg class="circular" viewBox="25 25 50 50">
+                            <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10"></circle>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Preloader -->
+<div class="preloader opaque-background" [hidden]="!showFullTransparentLoadingIndicator">
+  <svg class="circular" viewBox="25 25 50 50">
+      <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10"></circle>
+  </svg>
+</div>

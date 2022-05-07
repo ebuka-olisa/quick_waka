@@ -1,0 +1,124 @@
+<div class="modal-content" id="product-detail-modal">
+    <div class="modal-header no-border-bottom">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="close()" [disabled]="adding" [ngClass]="{'opacity-0': adding}">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <!-- product images -->
+            <div class="col-lg-6 col-md-6 col-sm-12 row sm-no-margin">
+                <div class="products-thumb text-center col-md-2 no-padding-right sm-display-none">
+                    <a *ngFor="let Photo of Product.photos; let i = index" (click)="gotoSlide(i)">
+                        <img [src]="Photo.url" alt=""/>
+                    </a>
+                </div>
+                <div class="col-md-10">
+                    <owl-carousel #owlElement [options]="SlideOptions" [carouselClasses]="['owl-theme', 'owl-navigation-2']">
+                        <img *ngFor="let Photo of Product.photos" [src]="Photo.url" alt=""/>
+                    </owl-carousel>
+                </div>
+            </div>
+            <!-- end product images -->
+
+            <div class="col-lg-6 col-md-6 col-sm-12 sm-p-lr-30">
+                <!-- product name -->
+                <p class="product-name-details text-uppercase letter-spacing-2 black-text no-m-b sm-text-center">{{Product.name}}</p>
+                <!-- end product name -->
+                <p class="text-uppercase letter-spacing-1 margin-one product-vendor sm-text-center" *ngIf="Product.vendor">
+                    Sold by 
+                    <a class="text-decoration-underline" routerLink="/vendors/{{Product.vendor.id}}" target="_blank" data-dismiss="modal" *ngIf="Product.vendor">{{Product.vendor.name}}</a>
+                </p>
+                <p class="text-uppercase letter-spacing-1 margin-one sm-no-margin product-vendor sm-text-center" *ngIf="!Product.vendor">
+                    Sold in the market
+                </p>
+                <!-- <del>₦17,000</del> - discount -->
+                <span class="price black-text title-small margin-two sm-text-center">₦{{Product.price | number}}<!--<span class="font-weight-300 font-16 orange-text margin-left-half">(-12%)</span>--></span>
+                <div class="separator-line bg-black no-margin-lr margin-five"></div>
+
+
+                <!-- add to cart -->
+                <div class="row col-12 no-margin-lr sm-text-center xs-display-block">
+                    <!--<div class="col-lg-3 col-md-3 col-sm-3 no-padding-left margin-five">
+                        <div class="select-style med-input xs-med-input shop-shorting-details no-border-round">
+                            <select>
+                                <option value="">QTY</option>
+                                <option value="">1</option>
+                                <option value="">2</option>
+                                <option value="">3</option>
+                                <option value="">4</option>
+                                <option value="">5</option>
+                            </select>
+                        </div>
+                    </div>-->
+                    <div class="col-lg-12 col-md-9 col-sm-12 no-padding margin-five" *ngIf="ShowCartButtons">
+                        <!-- add to bag button -->
+                        <button class="btn btn-green btn-medium button p-l-35" (click)="addToCart()" *ngIf="!Product.outOfStock && !IsServiceForm">
+                            Add To Cart
+                            <span class="loader display-inline-block no-animate no-m-l f-right" [ngClass]="{'opacity-0': !adding}"></span>
+                        </button>
+                        <button class="btn btn-orange btn-medium button" (click)="addItem()" *ngIf="!Product.outOfStock && IsServiceForm && !Selected">
+                            Add Item
+                        </button>
+                        <button class="btn btn-black btn-medium button" (click)="removeItem()" *ngIf="!Product.outOfStock && IsServiceForm && Selected">
+                            Remove Item
+                        </button>
+                        <button class="btn text-error btn-medium button" *ngIf="Product.outOfStock">
+                            Currently unavailable
+                        </button>
+                        <!-- end add to bag button -->
+                    </div>
+                </div>
+                
+                
+                <!-- product properties and description -->
+                <div class="product-properties col-12 no-padding-lr overflow-auto">
+                    <div class="f-left" *ngFor="let ProductProperty of Product.productProperties">
+                        <p class="property">{{ProductProperty.propertyTypeName}}:</p>
+                        <p class="value">{{ProductProperty.value}} {{ProductProperty.measurementTypeSymbol}}</p>
+                    </div>
+                </div>
+                <div [innerHTML]="Product.description | safeHtml" class="product-description"></div>
+
+
+                <!-- add to cart -->
+                <div class="row col-12 sm-text-center xs-display-none">
+                    <!--<div class="col-lg-3 col-md-3 col-sm-3 no-padding-left margin-five">
+                        <div class="select-style med-input xs-med-input shop-shorting-details no-border-round">
+                            <select>
+                                <option value="">QTY</option>
+                                <option value="">1</option>
+                                <option value="">2</option>
+                                <option value="">3</option>
+                                <option value="">4</option>
+                                <option value="">5</option>
+                            </select>
+                        </div>
+                    </div>-->
+                    <div class="col-lg-12 col-md-9 col-sm-12 no-padding margin-five" *ngIf="ShowCartButtons">
+                        <!-- add to bag button -->
+                        <button class="btn btn-green btn-medium button p-l-35" (click)="addToCart()" *ngIf="!Product.outOfStock && !IsServiceForm">
+                            Add To Cart
+                            <span class="loader display-inline-block no-animate no-m-l f-right" [ngClass]="{'opacity-0': !adding}"></span>
+                        </button>
+                        <button class="btn btn-orange btn-medium button" (click)="addItem()" *ngIf="!Product.outOfStock && IsServiceForm && !Selected">
+                            Add Item
+                        </button>
+                        <button class="btn btn-black btn-medium button" (click)="removeItem()" *ngIf="!Product.outOfStock && IsServiceForm && Selected">
+                            Remove Item
+                        </button>
+                        <button class="btn text-error btn-medium button" *ngIf="Product.outOfStock">
+                            Currently unavailable
+                        </button>
+                        <!-- end add to bag button -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--<div class="preloader opaque-background" [hidden]="!reloadingItems">
+    <svg class="circular" viewBox="25 25 50 50">
+        <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10"></circle>
+    </svg>
+</div>-->

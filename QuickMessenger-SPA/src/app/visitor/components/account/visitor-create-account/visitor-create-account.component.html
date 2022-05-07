@@ -1,0 +1,129 @@
+<section *ngIf="!completed">
+    <div class="container">
+        <div class="row col-md-9 col-lg-6 center-col">
+            <div class="col-md-12 text-center wow fadeInUp">
+                <h3 class="section-title padding-three padding-bottom-one font-28">Create An Account</h3>
+                <p class="black-text">Already have an account? <a class="orange-text text-decoration-underline" routerLink="/account/signin" [queryParams]= "queryParams">Sign In</a></p>
+            </div>
+            <div class="col-md-12">
+                <form  (ngSubmit)="register()">
+                    <div class="form-group">
+                        <!-- label -->
+                        <label for="last_name" class="font-14 black-text margin-bottom-half">Last Name</label>
+                        <!-- end label -->
+                        <!-- input -->
+                        <input type="text" id="last_name" name="last_name" class="input-round no-margin" [(ngModel)]="User.lastName"
+                        [ngClass]="{'input-validation-error': fieldErrors.LastName}">
+                        <span *ngIf="fieldErrors.LastName" class="field-validation-error ng-hide">{{fieldErrors.LastName}}</span>
+                        <!-- end input -->
+                    </div>
+                    <div class="form-group">
+                        <!-- label -->
+                        <label for="first_name" class="font-14 black-text margin-bottom-half">First Name</label>
+                        <!-- end label -->
+                        <!-- input -->
+                        <input type="text" id="first_name" name="first_name" class="input-round no-margin" [(ngModel)]="User.firstName"
+                        [ngClass]="{'input-validation-error': fieldErrors.FirstName}">
+                        <span *ngIf="fieldErrors.FirstName" class="field-validation-error ng-hide">{{fieldErrors.FirstName}}</span>
+                        <!-- end input -->
+                    </div>
+                    <div class="form-group">
+                        <!-- label -->
+                        <label for="email" class="font-14 black-text margin-bottom-half">Gender</label>
+                        <!-- end label -->
+                        <!-- input -->
+                        <div class="form-check no-p-l">
+                            <label class="custom-control custom-radio p-l-15 no-m-b">
+                                <input name="Gender" type="radio" class="custom-control-input" value="female" [(ngModel)]="User.gender" />
+                                <span class="custom-control-indicator"></span>
+                                <span class="custom-control-description">Female</span>
+                            </label>
+                            <label class="custom-control custom-radio p-l-15 no-m-b">
+                                <input name="Gender" type="radio" class="custom-control-input" value="male" [(ngModel)]="User.gender" />
+                                <span class="custom-control-indicator"></span>
+                                <span class="custom-control-description">Male</span>
+                            </label>
+                        </div>
+                        <span *ngIf="fieldErrors.Gender" class="field-validation-error ng-hide">{{fieldErrors.Gender}}</span>
+                        <!-- end input -->
+                    </div>
+                    <div class="form-group">
+                        <!-- label -->
+                        <label for="email" class="font-14 black-text margin-bottom-half">Email Address</label>
+                        <!-- end label -->
+                        <!-- input -->
+                        <input type="email" id="email" name="email" class="input-round no-margin" [(ngModel)]="User.email"
+                        [ngClass]="{'input-validation-error': fieldErrors.Email}">
+                        <span *ngIf="fieldErrors.Email" class="field-validation-error ng-hide">{{fieldErrors.Email}}</span>
+                        <!-- end input -->
+                    </div>
+                    <div class="form-group">
+                        <!-- label -->
+                        <label for="phone" class="font-14 black-text margin-bottom-half">Phone</label>
+                        <!-- end label -->
+                        <!-- input -->
+                        <input type="text" required ng2TelInput class="input-round no-margin"
+                            [ng2TelInputOptions]="{initialCountry: 'ng', utilsScript: 'node_modules/intl-tel-input/build/js/utils.js', preferredCountries: ['ng', 'us', 'gb']}"
+                            [(ngModel)]="TempPhone" name="phone" (ng2TelOutput)="getNumber($event)" (input)="checkPhoneError()"
+                            [ngClass]="{'input-validation-error': fieldErrors.Phone}"/>
+                        <span *ngIf="fieldErrors.Phone" class="field-validation-error ng-hide">{{fieldErrors.Phone}}</span>
+                        <!-- end input -->
+                    </div>
+                    <div class="form-group">
+                        <!-- label -->
+                        <label for="password" class="font-14 black-text margin-bottom-half">Password</label>
+                        <span class="f-right orange-text font-weight-300 cursor-pointer" (click)="togglePasswordVisibitiy()">{{PasswordSettings.displayText}}</span>
+                        <!-- end label -->
+                        <!-- input -->
+                        <input type="{{PasswordSettings.displayType}}" id="password" name="password" class="input-round no-margin" [(ngModel)]="User.password"
+                        [ngClass]="{'input-validation-error': fieldErrors.Password}">
+                        <span *ngIf="fieldErrors.Password" class="field-validation-error ng-hide">{{fieldErrors.Password}}</span>
+                        <!-- end input -->
+                    </div>
+                    <div class="form-group">
+                        <label for="remember-me" class="black-text font-13">By creating an account, you agree to <a class="text-decoration-underline orange-text">QuickWaka Terms & Conditions</a></label>
+                        </div>
+                    <div class="form-group">
+                        <button class="btn btn-orange btn-medium btn-round no-margin width-100 font-weight-700" type="submit" 
+                        [disabled]="processing">
+                            CREATE ACCOUNT
+                        <span *ngIf="processing" class="loader loader-small display-inline-block pull-right no-animate"></span>
+                    </button>
+                    </div>
+                    <div class="hr-label"><span class="hr-label__text text-uppercase font-weight-600 black-text">or</span></div>
+                    <div class="col-md-9 col-sm-10 col-12 center-col">
+                        <div class="col-6 no-padding-left display-inline-block">
+                            <a class="login-btn login-btn-google cursor-pointer" (click)="signInWithGoogle()">Google
+                                <span *ngIf="processingGoogle" class="loader loader-small display-inline-block pull-right no-animate"></span>
+                            </a>
+                        </div>
+                        <div class="col-6 no-padding-right display-inline-block">
+                            <a class="login-btn login-btn-facebook cursor-pointer" (click)="signInWithFB()">Facebook
+                                <span *ngIf="processingFacebook" class="loader loader-small display-inline-block pull-right no-animate"></span>
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section *ngIf="completed">
+    <div class="container">
+        <div class="row col-md-9 col-lg-6 center-col">
+            <div class="col-md-12 text-center wow fadeInUp">
+                <h3 class="section-title padding-three padding-bottom-one margin-bottom-half font-28">THANKS FOR REGiSTERING!</h3>
+                <p class="black-text margin-five no-margin-top font-14">Please check your email to confirm your registration, you must be confirmed to be allowed to sign in</p>
+                <p class="gray-text margin-two no-margin-top font-14">If you did not get an email, click the button below to resend the email</p>
+                <button class="btn btn-orange btn-medium btn-round no-margin width-100 font-weight-700" type="button" (click)="resendConfirmationEmail()" 
+                      [disabled]="resending">
+                        RESEND EMAIL
+                        <span *ngIf="resending" class="loader loader-small display-inline-block pull-right no-animate"></span>
+                </button>
+                <p class="text-green margin-two no-margin-bottom font-14" *ngIf="ResendConfirmationStatus.success"><i class="fa fa-check-circle text-green"></i>Confirmation email has been sent again!!</p>
+                <p class="text-error margin-two no-margin-bottom font-14" *ngIf="ResendConfirmationStatus.error"><i class="fa fa-exclamation-triangle text-error"></i>Confirmation email was not sent, please try again</p>
+            </div>
+        </div>
+    </div>
+</section>

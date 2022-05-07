@@ -1,0 +1,227 @@
+<div class="wrapper">
+    <!-- navigation panel -->
+    <nav class="navbar navbar-default navbar-fixed-top nav-transparent overlay-nav sticky-nav nav-white nav-dark" role="navigation" 
+        [ngClass]="{'shrink-nav': shrinkNav || AccountPage || CheckoutPage || MyAccountPage, 'bg-white no-border-bottom position-relative': CheckoutPage || MyAccountPage}">
+        <div class="container">
+            <div class="row">
+                <!-- logo -->
+                <div class="col-md-2 col-sm-2 col-xs-2 pull-left" style="z-index: 3">
+                    <!--<a *ngIf="!CheckoutPage && !MyAccountPage" class="logo-light" routerLink="/"><img alt="" src="assets/images/logo/logo-white-orange.png" class="logo logo-icon" /></a>-->
+                    <a *ngIf="!CheckoutPage && !MyAccountPage" class="logo-light" routerLink="/"><img alt="" src="assets/images/logo/logo-white.svg" class="logo"/></a>
+                    <a *ngIf="CheckoutPage || MyAccountPage" class="logo-light minimal-page" routerLink="/"><img alt="" src="assets/images/logo/logo_icon.svg" class="logo logo-icon" /></a>
+                    <a *ngIf="CheckoutPage || MyAccountPage" class="logo-light minimal-page" routerLink="/"><img alt="" src="assets/images/logo/logo_text.svg" class="logo"/></a>
+                </div>
+                <!-- end logo -->
+
+                <div *ngIf="CheckoutPage && !HideCheckoutTitle" class="checkout-page-title text-center">
+                    <h1 class="black-text">Checkout</h1>
+                    <h1 class="gray-text font-weight-400 no-letter-spacing contact-info">
+                        <i class="fa fa-phone black-text"></i>08166300937
+                    </h1>
+                </div>
+
+                <div *ngIf="MyAccountPage" class="checkout-page-title text-center">
+                    <h1 class="black-text">My Account</h1>
+                </div>
+
+                <!-- navigation menu -->
+                <div id="nav-menu" #dropdown="bs-dropdown" dropdown [insideClick]="true" [isOpen]="isDropDownOpen" *ngIf="!AccountPage && !CheckoutPage && !MyAccountPage" class="col-lg-8 col-md-9">
+                    <!-- toggle navigation -->
+                    <div class="navbar-header col-md-12 col-sm-12 col-xs-2 pull-right no-p-r">
+                        <button type="button" dropdownToggle class="navbar-toggle" data-toggle="collapse" 
+                            aria-controls="dropdown-main-menu" id="button-main-menu"> 
+                            <span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> 
+                        </button>
+                    </div>
+                    <!-- toggle navigation end -->
+                    <!-- main menu -->
+                    <div class="col-md-12 col-sm-12 no-padding-right accordion-menu text-right">
+                        <div class="navbar-collapse collapse" id="dropdown-main-menu" *dropdownMenu role="menu" aria-labelledby="button-main-menu">
+                            <ul id="accordion" class="nav navbar-nav navbar-right panel-group">
+                                <li><a routerLink="/">Home </a></li>
+                                <li class="position-relative simple-dropdown">
+                                    <a href="#" (mouseover)="showDropDown($event);" (mouseout)="hideDropDown($event);" data-toggle="dropdown" data-hover="dropdown"
+                                        aria-haspopup="true" aria-expanded="false" id="services-nav">Our Errands<i class="fa fa-angle-down"></i></a>
+                                    <ul class="dropdown-menu" aria-labelledby="services-nav">
+                                        <li class="dropdown-header">QuickWaka Errands</li>
+                                        <li *ngFor="let Service of Services"><a routerLink="/errand/{{Service.nameId}}">{{Service.name}}</a></li>
+                                    </ul>
+                                </li>
+                                <li><a routerLink="/vendors">Vendors</a></li>
+                                <li><a routerLink="/tracking">Tracking</a></li>
+                                <li><a routerLink="/about">About</a></li>
+                                <li><a routerLink="/contact">Contact</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <!-- end main menu -->
+                </div>
+                <!-- end nabigation menu -->
+
+                <!-- user and cart  -->
+                <div class="col-lg-2 col-md-1 no-padding-left search-cart-header pull-right" *ngIf="!AccountPage && !CheckoutPage && !MyAccountPage">
+                    <div class="top-cart">
+                        <!-- nav shopping bag -->
+                        <a routerLink="/cart" class="shopping-cart">
+                            <i class="fa fa-shopping-cart"></i>
+                            <div class="cart-badge" *ngIf="OrderCount > 0 && OrderCount < 100">{{OrderCount}}</div>
+                            <div class="cart-badge large-content" *ngIf="OrderCount > 0 && OrderCount > 99">99+</div>
+                        </a>
+                        <!-- end nav shopping bag -->
+                    </div>
+                    <div id="top-search" [ngClass]="{'position-relative simple-dropdown': user}">
+                        <a href="#" (click)="toggleDropDownIcon($event); false" role="button" class="user-sign-in" id="button-user-signin"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <div class="md-display-none">
+                                <span *ngIf="!user">Sign In</span>
+                                <!--<span *ngIf="user">Hi, {{user.firstName}}</span>-->
+                                <span *ngIf="user" class="signed-in">{{user.firstName.substring(0, 1)}}{{user.lastName.substring(0, 1)}}</span>
+                                <i class="fa fa-angle-down"></i>
+                            </div>
+                            <div class="md-display-block display-none">
+                                <i class="fa fa-user search-button"></i>
+                            </div>
+                        </a>
+                        <!-- sub menu -->
+                        <ul id="dropdown-user-signin" class="dropdown-menu mega-menu-full" aria-labelledby="button-user-signin" *ngIf="!user">
+                            <li class="mega-menu-column col-lg-2 col-md-2 col-sm-6 col-12">
+                                <!-- sub menu item  -->
+                                <ul>
+                                    <li class="dropdown-header">Account Links</li>
+                                    <li class="link"><a routerLink="/my-account/profile">My Account</a></li>
+                                    <li class="link"><a href="/my-account/orders">My Orders</a></li>
+                                </ul>
+                                <!-- end sub menu item  -->
+                            </li>
+                            <li class="mega-menu-column col-lg-4 col-md-4 col-sm-6 col-12">
+                                <!-- sub menu item  -->
+                                <ul>
+                                    <li class="dropdown-header">Returning User</li>
+                                    <li><p class="dropdown-note">Already have an account? Sign in.</p></li>
+                                    <li><button class="btn btn-white btn-medium m-t-10 m-b-20" routerLink="/account/signin">Sign In</button></li>
+                                </ul>
+                                <!-- end sub menu item  -->
+                            </li>
+                            <li class="mega-menu-column col-lg-6 col-md-6 col-sm-12 col-12">
+                                <!-- sub menu item  -->
+                                <ul>
+                                    <li class="dropdown-header">New Customer</li>
+                                    <li><p class="dropdown-note">Are you new to QuickWaka? Create your account to get started.</p></li>
+                                    <li><button class="btn btn-orange btn-medium m-t-10 m-b-20" routerLink="/account/create">Create Account</button></li>
+                                </ul>
+                                <!-- end sub menu item  -->
+                            </li>
+                        </ul>
+                        <ul id="dropdown-user-signin"  class="dropdown-menu dropdown-menu-right" aria-labelledby="button-user-signin" *ngIf="user">
+                            <li class="dropdown-header">{{user.fullName}}</li>
+                            <li class="link"><a routerLink="/my-account/profile">My Account</a></li>
+                            <li class="link"><a routerLink="/my-account/orders">My Orders</a></li>
+                            <li class="p-l-15"><a (click)="logOut()" class="cursor-pointer">Sign Out</a></li>
+                        </ul>
+                        <!-- end sub menu -->
+                    </div>
+                </div>
+                <!-- end user and cart  -->
+            </div>
+        </div>
+    </nav>
+    <!--end navigation panel -->
+
+    <!-- content section -->
+    <router-outlet (activate)="onActivate($event)"></router-outlet>
+    <!-- end content section -->
+
+    <!-- Ensure footer stays at bottom of page -->
+    <div class="flex-1" [ngClass]="{'bg-gray': CheckoutPage || MyAccountPage || GrayFlex}"></div>
+
+
+    <!-- footer -->
+    <footer [ngClass]="{'checkout-footer': CheckoutPage || MyAccountPage}">
+        <div class="container footer-middle" *ngIf="!AccountPage && !CheckoutPage && !MyAccountPage">
+            <div class="row">
+                <div class="col-md-4 col-sm-4 sm-display-none footer-link1">
+                    <!-- headline -->
+                    <h5>Newsletter</h5>
+                    <!-- end headline -->
+                    <!-- link -->
+                    <form>
+                        <div class="form-group input-group display-flex">
+                        <input type="email" class="form-control input-round text-transform-none flex-grow-100 no-margin-bottom" placeholder="Enter email">
+                        <button class="btn btn-orange btn-small btn-round no-margin" type="submit">Subscribe</button>
+                        </div>
+                    </form>
+                    <!-- end link -->
+                </div>
+                <div class="col-md-3 col-sm-6 col-xs-6 footer-link2 col-md-offset-1">
+                    <!-- headline -->
+                    <h5>Get To Know Us</h5>
+                    <!-- end headline -->
+                    <!-- link -->
+                    <ul>
+                        <li><a routerLink="/about">About Us</a></li>
+                        <li><a routerLink="/terms-and-conditions">Terms and Conditions</a></li>
+                        <!--<li><a href="services.html">Copywriting</a></li>
+                        <li><a href="services.html">Online Marketing</a></li>-->
+                    </ul>
+                    <!-- end link -->
+                </div>
+                <div class="col-md-4 col-sm-6 col-xs-6 footer-link3">
+                    <!-- headline -->
+                    <h5>Contact</h5>
+                    <!-- end headline -->
+                    <!-- link -->
+                    <ul>
+                        <li><p class="margin-two no-margin-top"><i class="fa fa-map-marker p-r-10 display-table-cell"></i> <label class="display-table-cell">47 Nsugbe Street, Abakaliki, Ebonyi State</label></p></li>
+                        <li><p class="margin-two no-margin-top"><i class="fa fa-phone p-r-10 display-table-cell"></i> <label class="display-table-cell">+2348102705104, +2348112641080</label></p></li>
+                        <li><p class="margin-two no-margin-top"><i class="fa fa-envelope p-r-10 display-table-cell"></i> <label class="display-table-cell">quickwaka@gmail.com</label></p></li>
+                    </ul>
+                    <!-- end link -->
+                </div>
+            </div>
+            <div class="wide-separator-line bg-dark-gray no-margin-lr margin-three no-margin-bottom"></div>
+            <div class="row margin-four no-margin-bottom">
+                <div class="col-lg-6 col-md-12 md-text-center md-margin-bottom-four display-none">
+                    <!-- link -->
+                    <ul class="list-inline footer-link text-uppercase">
+                        <li><a href="about-us.html">About</a></li>
+                        <li><a href="blog-masonry-3columns.html">Blog</a></li>
+                        <li><a href="careers.html">Careers</a></li>
+                        <li><a href="testimonials.html">Testimonials</a></li>
+                        <li><a href="contact-us.html">Contact</a></li>
+                    </ul>
+                    <!-- end link -->
+                </div>
+                <div class="col-lg-12 col-md-12 footer-social text-center md-text-center"> <!--col-lg-6 text-right-->
+                    <!-- social media link -->
+                    <a target="_blank" href="https://www.facebook.com/quickwakaerrand"><i class="fa fa-facebook"></i></a>
+                    <a target="_blank" href="https://www.instagram.com/quickwakaerrand"><i class="fa fa-instagram"></i></a>
+                    <a target="_blank" href="https://www.twitter.com/quickwakaerrand"><i class="fa fa-twitter"></i></a>
+                    <!--<a target="_blank" href="https://plus.google.com"><i class="fa fa-google-plus"></i></a>
+                    <a target="_blank" href="https://www.youtube.com/"><i class="fa fa-youtube"></i></a>
+                    <a target="_blank" href="https://www.linkedin.com/"><i class="fa fa-linkedin"></i></a>-->
+                    <!-- end social media link -->
+                </div>
+            </div>
+        </div>
+        <div class="wide-separator-line bg-dark-gray no-margin-lr no-margin" *ngIf="!AccountPage && !CheckoutPage && !MyAccountPage"></div>
+        <div class="container-fluid footer-bottom">
+            <div class="container">
+                <div class="row margin-three">
+                    <!-- copyright -->
+                    <div class="col-md-6 col-sm-6 col-12 copyright text-left letter-spacing-1 sm-text-center sm-margin-bottom-one">
+                        Copyright &copy; 2019 - <script>document.write(new Date().getFullYear());</script> Quick Waka.
+                        <p class="no-margin gray-text">Technology is proudly powered by <a href="http://listacc.com" class="footer-powered-logo"><img src="assets/images/logo/listacc/listacc-logo-gray.png" alt="LISTACC LTD"/></a></p>
+                    </div>
+                    <!-- end copyright -->
+                    <!-- logo -->
+                    <div class="col-md-6 col-sm-6 col-12 footer-logo text-right sm-text-center">
+                        <a [routerLink]="['/']" routerLinkActive="router-link-active" ><img src="assets/images/logo/logo-gray.svg" alt=""/></a>
+                    </div>
+                    <!-- end logo -->
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!-- end footer -->
+</div>
+
